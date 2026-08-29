@@ -183,26 +183,22 @@
     // 2. SISTEM PENGHUBUNG (FETCH API)
     // =========================================================
     async function panggilAPI(dataPayload) {
-      if(API_URL === "https://script.google.com/macros/s/AKfycbwO13pWgxuG9leCONp1ntnx3qzN55YEQsh2LUXKEHrTC8pT8CXRC52k3NDALeMiguRq/exec") {
-        throw new Error("URL API Belum disetting di kode HTML!");
-      }
-      
-      try {
-        let response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" }, 
-          body: JSON.stringify(dataPayload)
-        });
-        
-        let hasil = await response.json();
-        
-        if (hasil.status === 'success') return hasil.data;
-        else throw new Error(hasil.message);
-      } catch (error) {
-        console.error("API Error:", error);
-        throw error;
-      }
-    }
+  try {
+    let response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+      body: JSON.stringify(dataPayload)
+    });
+    
+    let hasil = await response.json();
+    
+    if (hasil.status === 'success') return hasil.data;
+    else throw new Error(hasil.message);
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+}
 
     // =========================================================
     // 3. LOGIKA APLIKASI UTAMA
