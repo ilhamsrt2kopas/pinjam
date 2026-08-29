@@ -156,7 +156,7 @@
     // =========================================================
     
     // 🔥 MASUKKAN URL WEB APP GOOGLE SCRIPT (Yang diakhiri /exec) DI SINI:
-    const API_URL = "MASUKKAN_URL_WEB_APP_ANDA_DISINI"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbwCj5rmp-Txy7VipYcntGNeYhr8R9HkY5jbVuiNjno4LqyJehCpwLlz8_uavwWlqkpa/exec"; 
 
     // Konfigurasi PWA Manifest
     const pwaManifest = {
@@ -183,7 +183,7 @@
     // 2. SISTEM PENGHUBUNG (FETCH API)
     // =========================================================
     async function panggilAPI(dataPayload) {
-      if(API_URL === "MASUKKAN_URL_WEB_APP_ANDA_DISINI") {
+      if(API_URL === "https://script.google.com/macros/s/AKfycbwCj5rmp-Txy7VipYcntGNeYhr8R9HkY5jbVuiNjno4LqyJehCpwLlz8_uavwWlqkpa/exec") {
         throw new Error("URL API Belum disetting di kode HTML!");
       }
       
