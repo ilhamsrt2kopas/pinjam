@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- PWA Meta Tags (Agar tampilan Full Screen tanpa URL) -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#2563eb">
+  <title>Peminjaman</title>
+  
+  <!-- Tempat untuk Injeksi Manifest PWA -->
+  <link rel="manifest" id="pwa-manifest">
+  
+  <!-- Memanggil library SweetAlert2 untuk Pop-up Estetik -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <style>
+    :root { --primary: #2563eb; --bg: #f3f4f6; --text: #1f2937; }
+    body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; -webkit-tap-highlight-color: transparent;}
+    * { box-sizing: border-box; }
+    
+    /* Navbar */
+    .navbar { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10;}
+    .profile-info { display: flex; flex-direction: column; }
+    .profile-info b { font-size: 16px; color: var(--primary); }
+    .profile-info span { font-size: 12px; color: #6b7280; }
+    
+    /* Layout */
+    .container { padding: 15px; }
+    .card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 8px; }
+    
+    /* Buttons & Inputs */
+    button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; width: 100%; margin-top: 5px; cursor: pointer; transition: 0.2s;}
+    button:active { transform: scale(0.98); }
+    button.btn-red { background: #ef4444; }
+    button.btn-sm { width: auto; padding: 6px 12px; font-size: 12px; }
+    input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    
+    /* Lists */
+    .list-item { border-left: 4px solid var(--primary); padding: 10px; background: #f9fafb; margin-bottom: 10px; border-radius: 4px;}
+    .list-item p { margin: 4px 0; font-size: 13px; }
+    .badge { padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; background: #10b981; }
+    .badge.late { background: #ef4444; }
+    .badge.active { background: #f59e0b; }
+    
+    /* Bottom Navigation */
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #e5e7eb; display: none; padding-bottom: env(safe-area-inset-bottom); }
+    .nav-item { flex: 1; text-align: center; padding: 12px 0; font-size: 12px; font-weight: bold; color: #6b7280; cursor: pointer; border-bottom: 3px solid transparent;}
+    .nav-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #eff6ff;}
+    
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <div id="navbar" class="navbar" style="display: none;">
+    <div class="profile-info">
+      <b id="user-name">Nama</b>
+      <span id="user-role">Role - NIP</span>
+    </div>
+    <button class="btn-red btn-sm" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container">
+    <!-- PUBLIC DASHBOARD -->
+    <div id="view-public" class="view-section active">
+      <div class="card" style="text-align: center;">
+        <h2>Sistem Peminjaman</h2>
+        <p>Silakan scan QR Code NIP Anda untuk masuk dan meminjam barang.</p>
+        <button onclick="openScannerWindow()">📷 Buka Kamera Scanner QR</button>
+      </div>
+
+      <div class="card">
+        <h3>Daftar Peminjaman Hari Ini</h3>
+        <div id="public-loans">Memuat...</div>
+      </div>
+
+      <div class="card">
+        <h3>Stok Barang Tersedia</h3>
+        <div id="public-items">Memuat...</div>
+      </div>
+    </div>
+
+    <!-- TAB: DASHBOARD -->
+    <div id="view-dashboard" class="view-section">
+      <div class="card">
+        <h3>Peminjaman Aktif Hari Ini</h3>
+        <div id="auth-loans">Memuat...</div>
+      </div>
+    </div>
+
+    <!-- TAB: PINJAM BARANG -->
+    <div id="view-borrow" class="view-section">
+      <div class="card">
+        <h3>Form Peminjaman</h3>
+        <label>Pilih Barang:</label>
+        <select id="sel-barang"></select>
+        
+        <div style="display:flex; gap:10px;">
+          <div style="flex:1">
+            <label>Jumlah:</label>
+            <input type="number" id="in-qty" min="1" value="1">
+          </div>
+          <div style="flex:1">
+            <label>Rencana Kembali:</label>
+            <input type="time" id="in-time" required>
+          </div>
+        </div>
+        <button onclick="addCart()" style="background:#10b981;">+ Tambah ke Daftar</button>
+        
+        <hr style="margin: 15px 0;">
+        <h4>Daftar yang akan dipinjam:</h4>
+        <ul id="cart-list" style="font-size:14px; padding-left:15px; margin-bottom:15px;"></ul>
+        
+        <label>Tujuan Peminjaman:</label>
+        <textarea id="in-tujuan" rows="2" placeholder="Keperluan..."></textarea>
+        
+        <button onclick="submitPinjam()">Ajukan Peminjaman</button>
+      </div>
+    </div>
+
+    <!-- TAB: DAFTAR PEGAWAI -->
+    <div id="view-users" class="view-section">
+      <div class="card">
+        <h3>Menu Admin</h3>
+        <button onclick="Swal.fire('Informasi', 'Fitur Cetak Laporan dapat dikembangkan di tahap selanjutnya.', 'info')">Cetak Laporan / Kartu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <div id="bottom-nav" class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('dashboard')">Dashboard</div>
+    <div class="nav-item" onclick="switchTab('borrow')">Pinjam</div>
+    <div class="nav-item admin-only" onclick="switchTab('users')" style="display:none;">Admin</div>
+  </div>
+
+  <script>
+    // ==========================================
+    // SCRIPT INJEKSI PWA MANIFEST (VERSI UPDATE)
+    // ==========================================
+    
+    // GANTI TEKS DI BAWAH DENGAN LINK DEPLOY /EXEC ANDA SENDIRI:
+    const linkAplikasiSaya = "https://script.google.com/macros/s/AKfycbx_vatYN8q2ndLikg4Vl9b1gm2p0D9hIFMKUBMRx3nKGUxgM0aPnAthl0yHGmXdqxBl/exec"; 
+
+    const pwaManifest = {
+      "name": "Sistem Peminjaman",
+      "short_name": "Peminjaman",
+      "start_url": linkAplikasiSaya, 
+      "display": "standalone", // Ini instruksi wajib untuk menghilangkan bar URL Chrome
+      "background_color": "#f3f4f6",
+      "theme_color": "#2563eb",
+      "icons": [
+        {
+          "src": "https://cdn-icons-png.flaticon.com/512/2907/2907155.png",
+          "sizes": "512x512",
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ]
+    };
+    
+    // Menggunakan Data URI (Lebih disukai Chrome untuk Bypass Keamanan GAS)
+    const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(pwaManifest));
+    document.getElementById('pwa-manifest').setAttribute('href', manifestUrl);
+    // ==========================================
+
+    let globalData = {};
+    let sessionToken = localStorage.getItem('pb_session');
+    let currentUser = null;
+    let cart = [];
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+
+    const call = (func, ...args) => new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[func](...args));
+
+    const formatDate = (dateStr) => {
+      if(!dateStr) return '-';
+      const d = new Date(dateStr);
+      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth()+1).padStart(2, '0')}/${d.getFullYear()} - ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    };
+
+    const getLateText = (rencanaStr) => {
+      if(!rencanaStr) return '';
+      let planned = new Date(rencanaStr);
+      let now = new Date();
+      let diff = now - planned;
+      if (diff <= 0) return '';
+      
+      let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      if (days >= 1) return `Terlambat ${days} Hari`;
+      
+      let hours = Math.floor(diff / (1000 * 60 * 60));
+      let mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      return `Terlambat ${hours} Jam ${mins} Menit`;
+    };
+
+    window.onload = async () => {
+      loadPublicData();
+      if(sessionToken) {
+        try {
+          let res = await call('getUserFromSession', sessionToken);
+          if(res) loginSuccess(res, sessionToken, true);
+          else logout(true);
+        } catch(e) { logout(true); }
+      }
+    };
+
+   async function loadPublicData() {
+      try {
+        document.getElementById('public-items').innerHTML = '<p style="text-align:center;">Memuat data stok...</p>';
+        
+        let response = await call('getPublicData');
+        console.log("Data dari server:", response); // Untuk dicek di Inspect Element jika perlu
+        
+        globalData = {
+          barang: (response && response.barang) ? response.barang : [],
+          todayLoans: (response && response.todayLoans) ? response.todayLoans : []
+        };
+      } catch (error) {
+        // TAMPILKAN ERROR ASLINYA DI SINI
+        Swal.fire('Gagal Membaca Spreadsheet', error.message, 'error');
+        globalData = { barang: [], todayLoans: [] };
+      }
+      
+      let hStok = '';
+      if (globalData.barang.length > 0) {
+        globalData.barang.forEach(b => {
+          hStok += `<div class="list-item">
+                      <b>${b.nama}</b><br>
+                      <span style="font-size:12px">Total: ${b.total} | Tersedia: <b style="color:green">${b.sisa}</b></span>
+                    </div>`;
+        });
+      } else {
+        hStok = '<p style="text-align:center; color:#888;">Belum ada data barang.</p>';
+      }
+      document.getElementById('public-items').innerHTML = hStok;
+      
+      let hSel = '<option value="">-- Pilih Barang --</option>';
+      globalData.barang.forEach(b => { 
+        hSel += `<option value="${b.kode}">${b.nama} (Sisa ${b.sisa})</option>`; 
+      });
+      document.getElementById('sel-barang').innerHTML = hSel;
+
+      renderLoans();
+    }
+
+    function renderLoans() {
+      let hLoans = '';
+      if(globalData.todayLoans.length === 0) hLoans = '<p style="text-align:center; color:#888;">Belum ada peminjaman.</p>';
+      
+      globalData.todayLoans.forEach(l => {
+        let lateText = l.status === 'DIPINJAM' ? getLateText(l.rencanaKembali) : '';
+        let badgeClass = l.status === 'SELESAI' ? 'badge' : (lateText ? 'badge late' : 'badge active');
+        let statusText = l.status === 'SELESAI' ? 'Selesai' : (lateText ? lateText : 'Aktif');
+
+        let isMine = currentUser && (currentUser.nip == l.nip);
+        let isAdmin = currentUser && (currentUser.role === 'Admin');
+        
+        let btnAkhiri = (l.status === 'DIPINJAM' && currentUser && (isMine || isAdmin)) 
+          ? `<button class="btn-red btn-sm" onclick="endLoan('${l.detailId}', '${lateText}')">Akhiri Pinjaman</button>` : '';
+
+        hLoans += `
+          <div class="list-item">
+            <b>${l.namaPeminjam}</b> <span class="${badgeClass}" style="float:right">${statusText}</span>
+            <p>📦 ${l.qty}x ${l.namaBarang} (${l.spek})</p>
+            <p>⏱️ Pinjam: ${formatDate(l.waktuPinjam)} <br>⏱️ Target: ${formatDate(l.rencanaKembali)}</p>
+            ${l.alasanLate ? `<p style="color:red"><i>Alasan telat: ${l.alasanLate}</i></p>` : ''}
+            ${btnAkhiri}
+          </div>
+        `;
+      });
+
+      document.getElementById('public-loans').innerHTML = hLoans;
+      if(currentUser) document.getElementById('auth-loans').innerHTML = hLoans;
+    }
+
+    function openScannerWindow() {
+      const scannerWin = window.open('', '_blank', 'width=500,height=600');
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Scan QR NIP</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <script src="https://unpkg.com/html5-qrcode"><\/script>
+          <style>
+            body { font-family: sans-serif; text-align: center; background: #222; color: white; padding: 10px; margin: 0; }
+            #reader { width: 100%; max-width: 450px; margin: auto; }
+            h3 { color: #4361ee; margin-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <h3>Arahkan Kamera ke QR NIP</h3>
+          <div id="reader"></div>
+          <script>
+            const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 }, supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA] }, false);
+            html5QrcodeScanner.render((decodedText) => {
+              if (window.opener) window.opener.postMessage({ type: 'QR_SCANNED', nip: decodedText }, '*');
+              html5QrcodeScanner.clear();
+              window.close(); 
+            }, (error) => {});
+          <\/script>
+        </body>
+        </html>
+      `;
+      scannerWin.document.write(htmlContent);
+      scannerWin.document.close();
+    }
+
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'QR_SCANNED') {
+        const scannedNip = event.data.nip;
+        Swal.fire({
+          title: 'Memverifikasi...',
+          text: 'Sedang mengecek data NIP',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+
+        call('loginWithQr', scannedNip).then(res => {
+          Swal.fire('Berhasil!', `Selamat datang, ${res.user.name}`, 'success');
+          loginSuccess(res.user, res.sessionToken, false);
+        }).catch(e => Swal.fire('Gagal Login', e.message, 'error'));
+      }
+    });
+
+    function loginSuccess(user, token, isSilent) {
+      currentUser = user;
+      sessionToken = token;
+      localStorage.setItem('pb_session', token);
+      
+      document.getElementById('user-name').innerText = user.name;
+      document.getElementById('user-role').innerText = `${user.role} - NIP: ${user.nip}`;
+      
+      document.getElementById('navbar').style.display = 'flex';
+      document.getElementById('bottom-nav').style.display = 'flex';
+      
+      if(user.role === 'Admin') document.querySelector('.admin-only').style.display = 'block';
+      
+      document.getElementById('view-public').classList.remove('active');
+      renderLoans();
+      switchTab('dashboard');
+    }
+
+    function logout(isSilent) {
+      // Hapus data sesi
+      localStorage.removeItem('pb_session');
+      currentUser = null;
+      sessionToken = null;
+
+      // Fungsi untuk mereset antarmuka tanpa perlu memuat ulang (reload) halaman
+      const resetUI = () => {
+        document.getElementById('navbar').style.display = 'none';
+        document.getElementById('bottom-nav').style.display = 'none';
+        document.querySelector('.admin-only').style.display = 'none';
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-public').classList.add('active');
+        loadPublicData();
+      };
+
+      if(isSilent) {
+        resetUI();
+        return;
+      }
+      
+      Swal.fire({
+        title: 'Berhasil Keluar',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      }).then(() => { 
+        resetUI(); 
+      });
+    }
+
+    function switchTab(tabId) {
+      // Sembunyikan semua konten dan matikan warna menu bawah
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      // Tampilkan konten yang dipilih
+      document.getElementById('view-' + tabId).classList.add('active');
+      
+      // Nyalakan warna pada menu bawah yang sesuai secara otomatis
+      let activeNav = document.querySelector(`.nav-item[onclick*='${tabId}']`);
+      if(activeNav) activeNav.classList.add('active');
+    }
+
+    function addCart() {
+      let sel = document.getElementById('sel-barang');
+      let qty = parseInt(document.getElementById('in-qty').value);
+      let time = document.getElementById('in-time').value;
+      
+      if(!sel.value || !time || isNaN(qty) || qty < 1) {
+        Swal.fire('Data Belum Lengkap', 'Barang, Jumlah (min. 1), dan Rencana Kembali wajib diisi!', 'warning');
+        return;
+      }
+
+      // Cek apakah stok mencukupi
+      let selectedItem = globalData.barang.find(b => b.kode === sel.value);
+      
+      // Hitung juga jumlah barang yang sama yang sudah ada di keranjang sebelumnya
+      let inCart = cart.filter(c => c.kode === sel.value).reduce((sum, c) => sum + parseInt(c.qty), 0);
+      
+      if (selectedItem) {
+        if ((qty + inCart) > selectedItem.sisa) {
+          Swal.fire('Stok Tidak Cukup', `Sisa stok ${selectedItem.nama} hanya tersisa ${selectedItem.sisa - inCart} lagi.`, 'error');
+          return;
+        }
+      }
+      
+      cart.push({ kode: sel.value, nama: sel.options[sel.selectedIndex].text, qty: qty, waktu: time });
+      Toast.fire({ icon: 'success', title: 'Dimasukkan ke daftar' });
+      renderCart();
+    }
+    
+    function renderCart() {
+      document.getElementById('cart-list').innerHTML = cart.map((c, i) => `<li>${c.qty}x ${c.nama} (S/d ${c.waktu})</li>`).join('');
+    }
+
+   async function submitPinjam() {
+      if(cart.length === 0) {
+        Swal.fire('Keranjang Kosong', 'Pilih minimal 1 barang terlebih dahulu!', 'warning');
+        return;
+      }
+      
+      let tujuan = document.getElementById('in-tujuan').value.trim();
+      
+      // Pengecekan tujuan peminjaman
+      if(!tujuan) {
+        Swal.fire('Data Belum Lengkap', 'Tujuan Peminjaman wajib diisi!', 'warning');
+        return;
+      }
+      
+      Swal.fire({ title: 'Memproses Peminjaman...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+
+      try {
+        await call('submitLoan', sessionToken, cart, tujuan);
+        Swal.fire('Sukses!', 'Peminjaman berhasil dicatat.', 'success');
+        cart = []; renderCart(); document.getElementById('in-tujuan').value = '';
+        loadPublicData();
+        switchTab('dashboard');
+      } catch (error) {
+        Swal.fire('Gagal', 'Terjadi kesalahan sistem', 'error');
+      }
+    }
+
+    async function endLoan(detailId, isLate) {
+      let reason = '';
+      if(isLate) {
+        const { value: text } = await Swal.fire({
+          title: 'Pengembalian Terlambat', input: 'textarea', inputLabel: 'Silakan masukkan alasan keterlambatan:', showCancelButton: true, confirmButtonText: 'Kirim & Akhiri', cancelButtonText: 'Batal'
+        });
+        if (text === undefined) return; 
+        if (!text) return Swal.fire('Gagal', 'Alasan keterlambatan wajib diisi!', 'error');
+        reason = text;
+      } else {
+        const result = await Swal.fire({ title: 'Akhiri Peminjaman?', text: "Anda yakin ingin mengakhiri pinjaman barang ini?", icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Akhiri!', cancelButtonText: 'Batal' });
+        if (!result.isConfirmed) return;
+      }
+      
+      Swal.fire({ title: 'Memproses Pengembalian...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+      try {
+        await call('finishDetail', sessionToken, detailId, reason);
+        Swal.fire('Selesai!', 'Peminjaman telah diakhiri.', 'success');
+        loadPublicData();
+      } catch (error) {
+        Swal.fire('Error', 'Gagal mengakhiri pinjaman', 'error');
+      }
+    }
+  </script>
+</body>
+</html>
