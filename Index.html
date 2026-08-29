@@ -15,8 +15,9 @@
   <!-- Tempat untuk Injeksi Manifest PWA -->
   <link rel="manifest" id="pwa-manifest">
   
-  <!-- Memanggil library SweetAlert2 untuk Pop-up Estetik -->
+  <!-- Memanggil library SweetAlert2 & HTML5-QRCode -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
   
   <style>
     :root { --primary: #2563eb; --bg: #f3f4f6; --text: #1f2937; }
@@ -58,6 +59,13 @@
   </style>
 </head>
 <body>
+
+  <!-- OVERLAY SCANNER DI SINI (Menutupi seluruh layar saat aktif) -->
+  <div id="scanner-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; flex-direction:column; justify-content:center; align-items:center;">
+    <h3 style="color:white; margin-bottom:15px;">Arahkan Kamera ke QR NIP</h3>
+    <div id="reader" style="width: 100%; max-width: 350px; background: white; border-radius: 8px; overflow: hidden;"></div>
+    <button class="btn-red" style="width:auto; margin-top:20px; padding: 10px 20px;" onclick="closeScanner()">Tutup Kamera</button>
+  </div>
 
   <!-- NAVBAR -->
   <div id="navbar" class="navbar" style="display: none;">
@@ -148,13 +156,13 @@
     // =========================================================
     
     // 🔥 MASUKKAN URL WEB APP GOOGLE SCRIPT (Yang diakhiri /exec) DI SINI:
-    const API_URL = "https://script.google.com/macros/s/AKfycbwCj5rmp-Txy7VipYcntGNeYhr8R9HkY5jbVuiNjno4LqyJehCpwLlz8_uavwWlqkpa/exec"; 
+    const API_URL = "MASUKKAN_URL_WEB_APP_ANDA_DISINI"; 
 
     // Konfigurasi PWA Manifest
     const pwaManifest = {
       "name": "Sistem Peminjaman",
       "short_name": "Peminjaman",
-      "start_url": "./", // "./" berarti mengacu pada link GitHub tempat file ini dihosting
+      "start_url": "./", 
       "display": "standalone",
       "background_color": "#f3f4f6",
       "theme_color": "#2563eb",
@@ -182,7 +190,6 @@
       try {
         let response = await fetch(API_URL, {
           method: "POST",
-          // Content-Type text/plain digunakan untuk membypass CORS Google Script
           headers: { "Content-Type": "text/plain;charset=utf-8" }, 
           body: JSON.stringify(dataPayload)
         });
@@ -231,10 +238,8 @@
     window.onload = async () => {
       loadPublicData();
       
-      // Auto-Login jika ada sesi
       if(sessionToken) {
         try {
-          // Token kita adalah Base64 dari NIP, maka kita decode untuk mengecek login kembali
           let nipDecoded = atob(sessionToken); 
           let res = await panggilAPI({ action: 'login', nip: nipDecoded });
           
@@ -249,8 +254,6 @@
     async function loadPublicData() {
       try {
         document.getElementById('public-items').innerHTML = '<p style="text-align:center;">Memuat data stok...</p>';
-        
-        // MENGGUNAKAN API BARU
         let response = await panggilAPI({ action: 'getPublicData' });
         
         globalData = {
@@ -258,7 +261,8 @@
           todayLoans: (response && response.todayLoans) ? response.todayLoans : []
         };
       } catch (error) {
-        Swal.fire('Gagal Membaca Data', error.message, 'error');
+        // Jangan munculkan alert error ini terus-menerus, tampilkan teks saja
+        document.getElementById('public-items').innerHTML = `<p style="text-align:center; color:red;">Koneksi gagal. Cek URL Web App.</p>`;
         globalData = { barang: [], todayLoans: [] };
       }
       
@@ -271,7 +275,7 @@
                     </div>`;
         });
       } else {
-        hStok = '<p style="text-align:center; color:#888;">Belum ada data barang.</p>';
+        if(!hStok) hStok = '<p style="text-align:center; color:#888;">Belum ada data barang.</p>';
       }
       document.getElementById('public-items').innerHTML = hStok;
       
@@ -314,57 +318,63 @@
       if(currentUser) document.getElementById('auth-loans').innerHTML = hLoans;
     }
 
+    // =========================================================
+    // 4. SISTEM SCANNER QR BARU (OVERLAY)
+    // =========================================================
+    let html5QrcodeScanner;
+
     function openScannerWindow() {
-      const scannerWin = window.open('', '_blank', 'width=500,height=600');
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Scan QR NIP</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <script src="https://unpkg.com/html5-qrcode"><\/script>
-          <style>
-            body { font-family: sans-serif; text-align: center; background: #222; color: white; padding: 10px; margin: 0; }
-            #reader { width: 100%; max-width: 450px; margin: auto; }
-            h3 { color: #4361ee; margin-top: 15px; }
-          </style>
-        </head>
-        <body>
-          <h3>Arahkan Kamera ke QR NIP</h3>
-          <div id="reader"></div>
-          <script>
-            const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 }, supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA] }, false);
-            html5QrcodeScanner.render((decodedText) => {
-              if (window.opener) window.opener.postMessage({ type: 'QR_SCANNED', nip: decodedText }, '*');
-              html5QrcodeScanner.clear();
-              window.close(); 
-            }, (error) => {});
-          <\/script>
-        </body>
-        </html>
-      `;
-      scannerWin.document.write(htmlContent);
-      scannerWin.document.close();
+      // Munculkan overlay hitam
+      document.getElementById('scanner-modal').style.display = 'flex';
+      
+      // Inisialisasi scanner jika belum ada
+      if (!html5QrcodeScanner) {
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 },
+          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+        }, false);
+      }
+      
+      // Jalankan kamera
+      html5QrcodeScanner.render((decodedText) => {
+        // Jika berhasil scan: matikan kamera & jalankan login
+        closeScanner(); 
+        prosesLoginQR(decodedText); 
+      }, (errorMessage) => {
+        // Abaikan error saat proses scanning frame per frame
+      });
     }
 
-    window.addEventListener('message', function(event) {
-      if (event.data && event.data.type === 'QR_SCANNED') {
-        const scannedNip = event.data.nip;
-        Swal.fire({
-          title: 'Memverifikasi...',
-          text: 'Sedang mengecek data NIP',
-          allowOutsideClick: false,
-          didOpen: () => { Swal.showLoading(); }
+    function closeScanner() {
+      // Sembunyikan overlay
+      document.getElementById('scanner-modal').style.display = 'none';
+      
+      // Hentikan proses kamera
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear().catch(error => {
+          console.error("Gagal mematikan kamera", error);
         });
-
-        // MENGGUNAKAN API BARU
-        panggilAPI({ action: 'login', nip: scannedNip }).then(res => {
-          Swal.fire('Berhasil!', `Selamat datang, ${res.user.name}`, 'success');
-          loginSuccess(res.user, res.sessionToken, false);
-        }).catch(e => Swal.fire('Gagal Login', e.message, 'error'));
       }
-    });
+    }
 
+    function prosesLoginQR(scannedNip) {
+      Swal.fire({
+        title: 'Memverifikasi...',
+        text: 'Sedang mengecek data NIP',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      panggilAPI({ action: 'login', nip: scannedNip }).then(res => {
+        Swal.fire('Berhasil!', `Selamat datang, ${res.user.name}`, 'success');
+        loginSuccess(res.user, res.sessionToken, false);
+      }).catch(e => Swal.fire('Gagal Login', e.message, 'error'));
+    }
+
+    // =========================================================
+    // 5. AUTENTIKASI & NAVIGASI
+    // =========================================================
     function loginSuccess(user, token, isSilent) {
       currentUser = user;
       sessionToken = token;
@@ -422,6 +432,9 @@
       if(activeNav) activeNav.classList.add('active');
     }
 
+    // =========================================================
+    // 6. TRANSAKSI
+    // =========================================================
     function addCart() {
       let sel = document.getElementById('sel-barang');
       let qty = parseInt(document.getElementById('in-qty').value);
@@ -467,7 +480,6 @@
       Swal.fire({ title: 'Memproses Peminjaman...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
 
       try {
-        // MENGGUNAKAN API BARU
         await panggilAPI({ action: 'submitLoan', token: sessionToken, cart: cart, tujuan: tujuan });
         
         Swal.fire('Sukses!', 'Peminjaman berhasil dicatat.', 'success');
@@ -495,7 +507,6 @@
       
       Swal.fire({ title: 'Memproses Pengembalian...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
       try {
-        // MENGGUNAKAN API BARU
         await panggilAPI({ action: 'finishDetail', token: sessionToken, detailId: detailId, reason: reason });
         
         Swal.fire('Selesai!', 'Peminjaman telah diakhiri.', 'success');
