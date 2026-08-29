@@ -156,7 +156,7 @@
     // =========================================================
     
     // 🔥 MASUKKAN URL WEB APP GOOGLE SCRIPT (Yang diakhiri /exec) DI SINI:
-    const API_URL = "LINK"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbwO13pWgxuG9leCONp1ntnx3qzN55YEQsh2LUXKEHrTC8pT8CXRC52k3NDALeMiguRq/exec"; 
 
     // Konfigurasi PWA Manifest
     const pwaManifest = {
@@ -183,7 +183,7 @@
     // 2. SISTEM PENGHUBUNG (FETCH API)
     // =========================================================
     async function panggilAPI(dataPayload) {
-      if(API_URL === "LINK") {
+      if(API_URL === "https://script.google.com/macros/s/AKfycbwO13pWgxuG9leCONp1ntnx3qzN55YEQsh2LUXKEHrTC8pT8CXRC52k3NDALeMiguRq/exec") {
         throw new Error("URL API Belum disetting di kode HTML!");
       }
       
@@ -330,7 +330,7 @@
       // Inisialisasi scanner jika belum ada
       if (!html5QrcodeScanner) {
         html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-          fps: 10, 
+          fps: 60, 
           qrbox: { width: 250, height: 250 },
           supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
         }, false);
