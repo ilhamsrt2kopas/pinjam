@@ -143,18 +143,19 @@
   </div>
 
   <script>
-    // ==========================================
-    // SCRIPT INJEKSI PWA MANIFEST (VERSI UPDATE)
-    // ==========================================
+    // =========================================================
+    // 1. PENGATURAN API & PWA (WAJIB DISESUAIKAN)
+    // =========================================================
     
-    // GANTI TEKS DI BAWAH DENGAN LINK DEPLOY /EXEC ANDA SENDIRI:
-    const linkAplikasiSaya = "https://script.google.com/macros/s/AKfycbx_vatYN8q2ndLikg4Vl9b1gm2p0D9hIFMKUBMRx3nKGUxgM0aPnAthl0yHGmXdqxBl/exec"; 
+    // 🔥 MASUKKAN URL WEB APP GOOGLE SCRIPT (Yang diakhiri /exec) DI SINI:
+    const API_URL = "https://script.google.com/macros/s/AKfycbwCj5rmp-Txy7VipYcntGNeYhr8R9HkY5jbVuiNjno4LqyJehCpwLlz8_uavwWlqkpa/exec"; 
 
+    // Konfigurasi PWA Manifest
     const pwaManifest = {
       "name": "Sistem Peminjaman",
       "short_name": "Peminjaman",
-      "start_url": linkAplikasiSaya, 
-      "display": "standalone", // Ini instruksi wajib untuk menghilangkan bar URL Chrome
+      "start_url": "./", // "./" berarti mengacu pada link GitHub tempat file ini dihosting
+      "display": "standalone",
       "background_color": "#f3f4f6",
       "theme_color": "#2563eb",
       "icons": [
@@ -167,25 +168,44 @@
       ]
     };
     
-    // Menggunakan Data URI (Lebih disukai Chrome untuk Bypass Keamanan GAS)
     const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(pwaManifest));
     document.getElementById('pwa-manifest').setAttribute('href', manifestUrl);
-    // ==========================================
 
-    let globalData = {};
+    // =========================================================
+    // 2. SISTEM PENGHUBUNG (FETCH API)
+    // =========================================================
+    async function panggilAPI(dataPayload) {
+      if(API_URL === "MASUKKAN_URL_WEB_APP_ANDA_DISINI") {
+        throw new Error("URL API Belum disetting di kode HTML!");
+      }
+      
+      try {
+        let response = await fetch(API_URL, {
+          method: "POST",
+          // Content-Type text/plain digunakan untuk membypass CORS Google Script
+          headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+          body: JSON.stringify(dataPayload)
+        });
+        
+        let hasil = await response.json();
+        
+        if (hasil.status === 'success') return hasil.data;
+        else throw new Error(hasil.message);
+      } catch (error) {
+        console.error("API Error:", error);
+        throw error;
+      }
+    }
+
+    // =========================================================
+    // 3. LOGIKA APLIKASI UTAMA
+    // =========================================================
+    let globalData = { barang: [], todayLoans: [] };
     let sessionToken = localStorage.getItem('pb_session');
     let currentUser = null;
     let cart = [];
 
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'top',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true
-    });
-
-    const call = (func, ...args) => new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[func](...args));
+    const Toast = Swal.mixin({ toast: true, position: 'top', showConfirmButton: false, timer: 3000, timerProgressBar: true });
 
     const formatDate = (dateStr) => {
       if(!dateStr) return '-';
@@ -210,29 +230,35 @@
 
     window.onload = async () => {
       loadPublicData();
+      
+      // Auto-Login jika ada sesi
       if(sessionToken) {
         try {
-          let res = await call('getUserFromSession', sessionToken);
-          if(res) loginSuccess(res, sessionToken, true);
+          // Token kita adalah Base64 dari NIP, maka kita decode untuk mengecek login kembali
+          let nipDecoded = atob(sessionToken); 
+          let res = await panggilAPI({ action: 'login', nip: nipDecoded });
+          
+          if(res && res.user) loginSuccess(res.user, res.sessionToken, true);
           else logout(true);
-        } catch(e) { logout(true); }
+        } catch(e) { 
+          logout(true); 
+        }
       }
     };
 
-   async function loadPublicData() {
+    async function loadPublicData() {
       try {
         document.getElementById('public-items').innerHTML = '<p style="text-align:center;">Memuat data stok...</p>';
         
-        let response = await call('getPublicData');
-        console.log("Data dari server:", response); // Untuk dicek di Inspect Element jika perlu
+        // MENGGUNAKAN API BARU
+        let response = await panggilAPI({ action: 'getPublicData' });
         
         globalData = {
           barang: (response && response.barang) ? response.barang : [],
           todayLoans: (response && response.todayLoans) ? response.todayLoans : []
         };
       } catch (error) {
-        // TAMPILKAN ERROR ASLINYA DI SINI
-        Swal.fire('Gagal Membaca Spreadsheet', error.message, 'error');
+        Swal.fire('Gagal Membaca Data', error.message, 'error');
         globalData = { barang: [], todayLoans: [] };
       }
       
@@ -331,7 +357,8 @@
           didOpen: () => { Swal.showLoading(); }
         });
 
-        call('loginWithQr', scannedNip).then(res => {
+        // MENGGUNAKAN API BARU
+        panggilAPI({ action: 'login', nip: scannedNip }).then(res => {
           Swal.fire('Berhasil!', `Selamat datang, ${res.user.name}`, 'success');
           loginSuccess(res.user, res.sessionToken, false);
         }).catch(e => Swal.fire('Gagal Login', e.message, 'error'));
@@ -357,12 +384,10 @@
     }
 
     function logout(isSilent) {
-      // Hapus data sesi
       localStorage.removeItem('pb_session');
       currentUser = null;
       sessionToken = null;
 
-      // Fungsi untuk mereset antarmuka tanpa perlu memuat ulang (reload) halaman
       const resetUI = () => {
         document.getElementById('navbar').style.display = 'none';
         document.getElementById('bottom-nav').style.display = 'none';
@@ -388,14 +413,11 @@
     }
 
     function switchTab(tabId) {
-      // Sembunyikan semua konten dan matikan warna menu bawah
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       
-      // Tampilkan konten yang dipilih
       document.getElementById('view-' + tabId).classList.add('active');
       
-      // Nyalakan warna pada menu bawah yang sesuai secara otomatis
       let activeNav = document.querySelector(`.nav-item[onclick*='${tabId}']`);
       if(activeNav) activeNav.classList.add('active');
     }
@@ -410,10 +432,7 @@
         return;
       }
 
-      // Cek apakah stok mencukupi
       let selectedItem = globalData.barang.find(b => b.kode === sel.value);
-      
-      // Hitung juga jumlah barang yang sama yang sudah ada di keranjang sebelumnya
       let inCart = cart.filter(c => c.kode === sel.value).reduce((sum, c) => sum + parseInt(c.qty), 0);
       
       if (selectedItem) {
@@ -432,7 +451,7 @@
       document.getElementById('cart-list').innerHTML = cart.map((c, i) => `<li>${c.qty}x ${c.nama} (S/d ${c.waktu})</li>`).join('');
     }
 
-   async function submitPinjam() {
+    async function submitPinjam() {
       if(cart.length === 0) {
         Swal.fire('Keranjang Kosong', 'Pilih minimal 1 barang terlebih dahulu!', 'warning');
         return;
@@ -440,7 +459,6 @@
       
       let tujuan = document.getElementById('in-tujuan').value.trim();
       
-      // Pengecekan tujuan peminjaman
       if(!tujuan) {
         Swal.fire('Data Belum Lengkap', 'Tujuan Peminjaman wajib diisi!', 'warning');
         return;
@@ -449,13 +467,15 @@
       Swal.fire({ title: 'Memproses Peminjaman...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
 
       try {
-        await call('submitLoan', sessionToken, cart, tujuan);
+        // MENGGUNAKAN API BARU
+        await panggilAPI({ action: 'submitLoan', token: sessionToken, cart: cart, tujuan: tujuan });
+        
         Swal.fire('Sukses!', 'Peminjaman berhasil dicatat.', 'success');
         cart = []; renderCart(); document.getElementById('in-tujuan').value = '';
         loadPublicData();
         switchTab('dashboard');
       } catch (error) {
-        Swal.fire('Gagal', 'Terjadi kesalahan sistem', 'error');
+        Swal.fire('Gagal', error.message || 'Terjadi kesalahan sistem', 'error');
       }
     }
 
@@ -475,11 +495,13 @@
       
       Swal.fire({ title: 'Memproses Pengembalian...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
       try {
-        await call('finishDetail', sessionToken, detailId, reason);
+        // MENGGUNAKAN API BARU
+        await panggilAPI({ action: 'finishDetail', token: sessionToken, detailId: detailId, reason: reason });
+        
         Swal.fire('Selesai!', 'Peminjaman telah diakhiri.', 'success');
         loadPublicData();
       } catch (error) {
-        Swal.fire('Error', 'Gagal mengakhiri pinjaman', 'error');
+        Swal.fire('Error', error.message || 'Gagal mengakhiri pinjaman', 'error');
       }
     }
   </script>
