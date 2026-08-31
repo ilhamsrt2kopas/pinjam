@@ -10,10 +10,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#2563eb">
-  <title>Peminjaman</title>
+  <title>Sistem Peminjaman Barang SRT 2 Kota Pasuruan</title>
+
   
-  <!-- Tempat untuk Injeksi Manifest PWA -->
-  <link rel="manifest" id="pwa-manifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="manifest" href="manifest.json">
   
   <!-- Memanggil library SweetAlert2 & HTML5-QRCode -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -158,26 +160,10 @@
     // 🔥 MASUKKAN URL WEB APP GOOGLE SCRIPT (Yang diakhiri /exec) DI SINI:
     const API_URL = "https://script.google.com/macros/s/AKfycbwO13pWgxuG9leCONp1ntnx3qzN55YEQsh2LUXKEHrTC8pT8CXRC52k3NDALeMiguRq/exec"; 
 
-    // Konfigurasi PWA Manifest
-    const pwaManifest = {
-      "name": "Sistem Peminjaman",
-      "short_name": "Peminjaman",
-      "start_url": "./", 
-      "display": "standalone",
-      "background_color": "#f3f4f6",
-      "theme_color": "#2563eb",
-      "icons": [
-        {
-          "src": "https://cdn-icons-png.flaticon.com/512/2907/2907155.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
-        }
-      ]
-    };
+
     
-    const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(pwaManifest));
-    document.getElementById('pwa-manifest').setAttribute('href', manifestUrl);
+   // const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(pwaManifest));
+//    document.getElementById('pwa-manifest').setAttribute('href', manifestUrl);
 
     // =========================================================
     // 2. SISTEM PENGHUBUNG (FETCH API)
