@@ -1,13 +1,18 @@
 {
-  "name": "Sistem Peminjaman",
-  "short_name": "Peminjaman",
+  "name": "Sistem Peminjaman Barang SRT 2 Kota Pasuruan",
+  "short_name": "Pinjam Barang",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f3f4f6",
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2907/2907155.png",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+    },
+    {
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
