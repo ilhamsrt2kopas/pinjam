@@ -1,7 +1,7 @@
 {
   "name": "Sistem Peminjaman Barang SRT 2 Kota Pasuruan",
   "short_name": "Pinjam Barang",
-  "start_url": "./index.html",
+  "start_url": "./Index.html",
   "display": "standalone",
   "background_color": "#f3f4f6",
   "theme_color": "#2563eb",
