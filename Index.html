@@ -62,9 +62,9 @@
 </head>
 <body>
 
-  <!-- OVERLAY SCANNER DI SINI (Menutupi seluruh layar saat aktif) -->
+  <!-- OVERLAY SCANNER -->
   <div id="scanner-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; flex-direction:column; justify-content:center; align-items:center;">
-    <h3 style="color:white; margin-bottom:15px;">Arahkan Kamera ke QR NIP</h3>
+    <h3 style="color:white; margin-bottom:15px;">Arahkan Kamera ke QR Kartu Pegawai</h3>
     <div id="reader" style="width: 100%; max-width: 350px; background: white; border-radius: 8px; overflow: hidden;"></div>
     <button class="btn-red" style="width:auto; margin-top:20px; padding: 10px 20px;" onclick="closeScanner()">Tutup Kamera</button>
   </div>
@@ -82,9 +82,10 @@
     <!-- PUBLIC DASHBOARD -->
     <div id="view-public" class="view-section active">
       <div class="card" style="text-align: center;">
-        <h2>Sistem Peminjaman</h2>
-        <p>Silakan scan QR Code NIP Anda untuk masuk dan meminjam barang.</p>
-        <button onclick="openScannerWindow()">📷 Buka Kamera Scanner QR</button>
+        <img href="logo sr.png"></img>
+        <h2>Sistem Peminjaman Barang SRT 2 Kota Pasuruan</h2>
+        <p>Silakan scan QR Code pada Kartu Pegawai Anda untuk masuk dan meminjam barang.</p>
+        <button onclick="openScannerWindow()">📷 Scan QR</button>
       </div>
 
       <div class="card">
@@ -140,7 +141,7 @@
     <div id="view-users" class="view-section">
       <div class="card">
         <h3>Menu Admin</h3>
-        <button onclick="Swal.fire('Informasi', 'Fitur Cetak Laporan dapat dikembangkan di tahap selanjutnya.', 'info')">Cetak Laporan / Kartu</button>
+        <button onclick="Swal.fire('Informasi', 'Fitur Cetak Laporan masih dalam tahap pengembangan.', 'info')">Cetak Laporan / Kartu</button>
       </div>
     </div>
   </div>
