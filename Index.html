@@ -58,6 +58,22 @@
     
     .view-section { display: none; }
     .view-section.active { display: block; }
+    /* Cetak Laporan */
+@media print {
+  body * { visibility: hidden; }
+  #print-area, #print-area * { visibility: visible; }
+  #print-area { 
+    position: absolute; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    color: black !important;
+  }
+  .navbar, .bottom-nav, button, input, select { display: none !important; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  th, td { border: 1px solid #000; padding: 6px 8px; font-size: 11pt; text-align: left; }
+  th { background-color: #f2f2f2 !important; -webkit-print-color-adjust: exact; }
+}
   </style>
 </head>
 <body>
@@ -137,14 +153,56 @@
       </div>
     </div>
 
-    <!-- TAB: DAFTAR PEGAWAI -->
-    <div id="view-users" class="view-section">
-      <div class="card">
-        <h3>Menu Admin</h3>
-        <button onclick="Swal.fire('Informasi', 'Fitur Cetak Laporan masih dalam tahap pengembangan.', 'info')">Cetak Laporan / Kartu</button>
+   <!-- TAB: CETAK LAPORAN (ADMIN) -->
+<div id="view-users" class="view-section">
+  <div class="card">
+    <h3>Filter Laporan Peminjaman</h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:140px;">
+        <label>Dari Tanggal:</label>
+        <input type="date" id="rep-start">
+      </div>
+      <div style="flex:1; min-width:140px;">
+        <label>Sampai Tanggal:</label>
+        <input type="date" id="rep-end">
+      </div>
+    </div>
+    <button onclick="generateReport()" style="background:#2563eb; margin-top:10px;">🔍 Tampilkan Laporan</button>
+  </div>
+
+  <!-- Output & Preview Laporan -->
+  <div id="card-report-result" class="card" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h4 style="margin:0;">Preview Laporan</h4>
+      <button onclick="window.print()" class="btn-sm" style="background:#10b981; width:auto;">🖨️ Cetak / Save PDF</button>
+    </div>
+    
+    <div id="print-area">
+      <div style="text-align:center; margin-bottom:15px;">
+        <h3 style="margin:0; border:none; padding:0;">LAPORAN PEMINJAMAN BARANG</h3>
+        <p style="margin:5px 0; font-size:14px;" id="rep-period-text">Periode: Semua Data</p>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse: collapse; font-size:12px;">
+          <thead>
+            <tr style="background:#e5e7eb; text-align:left;">
+              <th style="padding:8px; border:1px solid #ccc;">No</th>
+              <th style="padding:8px; border:1px solid #ccc;">Peminjam</th>
+              <th style="padding:8px; border:1px solid #ccc;">Barang</th>
+              <th style="padding:8px; border:1px solid #ccc;">Qty</th>
+              <th style="padding:8px; border:1px solid #ccc;">Tgl Pinjam</th>
+              <th style="padding:8px; border:1px solid #ccc;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="report-table-body">
+            <!-- Data laporan akan dirender di sini -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+</div>
 
   <!-- BOTTOM NAVIGATION -->
   <div id="bottom-nav" class="bottom-nav">
@@ -498,6 +556,62 @@
         Swal.fire('Error', error.message || 'Gagal mengakhiri pinjaman', 'error');
       }
     }
+
+    async function generateReport() {
+  let startVal = document.getElementById('rep-start').value;
+  let endVal = document.getElementById('rep-end').value;
+
+  Swal.fire({
+    title: 'Mengambil Data Laporan...',
+    allowOutsideClick: false,
+    didOpen: () => { Swal.showLoading(); }
+  });
+
+  try {
+    let data = await panggilAPI({
+      action: 'getReportData',
+      token: sessionToken,
+      startDate: startVal,
+      endDate: endVal
+    });
+
+    Swal.close();
+    document.getElementById('card-report-result').style.display = 'block';
+
+    // Set teks periode
+    let periodText = 'Semua Data';
+    if(startVal && endVal) periodText = `${startVal} s/d ${endVal}`;
+    else if(startVal) periodText = `Mulai ${startVal}`;
+    else if(endVal) periodText = `Sampai ${endVal}`;
+    document.getElementById('rep-period-text').innerText = `Periode: ${periodText}`;
+
+    // Render tabel
+    let tbody = document.getElementById('report-table-body');
+    if(!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:10px;">Tidak ada data pada periode ini.</td></tr>`;
+      return;
+    }
+
+    let html = '';
+    data.forEach((item, index) => {
+      html += `
+        <tr>
+          <td style="padding:8px; border:1px solid #ccc;">${index + 1}</td>
+          <td style="padding:8px; border:1px solid #ccc;">${item.namaPeminjam}</td>
+          <td style="padding:8px; border:1px solid #ccc;">${item.namaBarang}</td>
+          <td style="padding:8px; border:1px solid #ccc;">${item.qty}</td>
+          <td style="padding:8px; border:1px solid #ccc;">${formatDate(item.waktuPinjam)}</td>
+          <td style="padding:8px; border:1px solid #ccc;"><b>${item.status}</b></td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = html;
+
+  } catch (error) {
+    Swal.fire('Gagal Load Laporan', error.message || 'Terjadi kesalahan', 'error');
+  }
+}
+    
     // Daftarkan Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
