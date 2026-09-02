@@ -123,8 +123,11 @@ text-align:center;
       <div class="card" style="text-align: center;">
         <img src="./logo sr.jpg" max width="20%" height="auto"></img>
         <h2>Sistem Peminjaman Barang SRT 2 Kota Pasuruan</h2>
-        <p>Silakan scan QR Code pada Kartu Pegawai Anda untuk masuk dan meminjam barang.</p>
+        <p>Scan QR Code pada Kartu Pegawai Anda untuk masuk dan meminjam barang.</p>
         <button onclick="openScannerWindow()">📷 Scan QR</button>
+        <button onclick="openAdminLoginModal()" class="btn btn-dark" style="background-color: #333; color: #fff;">
+  🔐 Login Admin
+</button>
       </div>
 
       <div class="card">
@@ -658,6 +661,85 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.log('SW gagal', err));
   });
 }
+    function openAdminLoginModal() {
+  document.getElementById('adminNipInput').value = '';
+  document.getElementById('adminPassInput').value = '';
+  document.getElementById('modalAdminLogin').style.display = 'flex';
+}
+
+function closeAdminLoginModal() {
+  document.getElementById('modalAdminLogin').style.display = 'none';
+}
+
+async function processAdminLogin() {
+  const nip = document.getElementById('adminNipInput').value.trim();
+  const password = document.getElementById('adminPassInput').value.trim();
+
+  if (!nip || !password) {
+    Swal.fire('Peringatan', 'NIP dan Password wajib diisi!', 'warning');
+    return;
+  }
+
+  Swal.fire({
+    title: 'Memproses Login...',
+    allowOutsideClick: false,
+    didOpen: () => { Swal.showLoading(); }
+  });
+
+  try {
+    const res = await panggilAPI({
+      action: 'loginAdmin',
+      nip: nip,
+      password: password
+    });
+
+    Swal.close();
+    closeAdminLoginModal();
+
+    // Simpan sesi login
+    sessionToken = res.sessionToken;
+    currentUser = res.user;
+    localStorage.setItem('sessionToken', sessionToken);
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Login Berhasil',
+      text: `Selamat datang, ${currentUser.name}!`,
+      timer: 1500,
+      showConfirmButton: false
+    }).then(() => {
+      // Refresh UI / Tampilan Aplikasi
+      if (typeof renderUserUI === 'function') renderUserUI();
+      else location.reload();
+    });
+
+  } catch (error) {
+    Swal.fire('Login Gagal', error.message || 'Terjadi kesalahan', 'error');
+  }
+}
+     <!-- Modal Login Admin -->
+<div id="modalAdminLogin" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:20px; border-radius:8px; width:90%; max-width:350px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+    <h3 style="margin-top:0; text-align:center;">Login Khusus Admin</h3>
+    
+    <div style="margin-bottom:12px;">
+      <label style="display:block; font-size:12px; margin-bottom:4px;">NIP Admin</label>
+      <input type="text" id="adminNipInput" placeholder="Masukkan NIP" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+    </div>
+    
+    <div style="margin-bottom:15px;">
+      <label style="display:block; font-size:12px; margin-bottom:4px;">Password</label>
+      <input type="password" id="adminPassInput" placeholder="Masukkan Password" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button onclick="closeAdminLoginModal()" style="flex:1; padding:8px; background:#ccc; border:none; border-radius:4px; cursor:pointer;">Batal</button>
+      <button onclick="processAdminLogin()" style="flex:1; padding:8px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">Masuk</button>
+    </div>
+  </div>
+</div>
   </script>
+   
 </body>
 </html>
