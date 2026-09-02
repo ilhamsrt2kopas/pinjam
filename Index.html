@@ -73,30 +73,63 @@
       table { width: 100%; border-collapse: collapse; margin-top: 15px; }
       th, td { border: 1px solid #000; padding: 6px 8px; font-size: 11pt; text-align: left; }
       th { background-color: #f2f2f2 !important; -webkit-print-color-adjust: exact; }
+      .kop-line { border-color: #000 !important; }
     }
 
-    /* Kop Surat */
-    .kop {
-      display: grid;
-      grid-template-columns: 25% 75%;
+    /* KOP SURAT RESMI DINAS */
+    .kop-container {
       width: 100%;
-      height: 100%;
-      border-bottom: 3px double #000;
       margin-bottom: 15px;
-      text-align: center;
-      vertical-align: middle;
     }
-    .logo {
-      max-width: 100%;
-      height: auto;
-      vertical-align: middle;
+    .kop {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .kop-logo {
+      width: 100px;
+      flex-shrink: 0;
       text-align: center;
     }
-    .detail {
-      max-width: 100%;
+    .kop-logo img {
+      max-width: 85px;
       height: auto;
-      vertical-align: middle;
+      display: block;
+      margin: 0 auto;
+    }
+    .kop-detail {
+      flex-grow: 1;
       text-align: center;
+      padding-right: 100px; /* Menyeimbangkan posisi teks tepat di tengah */
+      font-family: Arial, sans-serif;
+      color: #000;
+    }
+    .kop-title-bold {
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+    .kop-title-large {
+      font-weight: bold;
+      font-size: 15px;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+    .kop-address {
+      font-size: 11px;
+      font-weight: normal;
+      line-height: 1.3;
+      margin-top: 2px;
+    }
+
+    /* Garis Ganda Khas Surat Resmi (Tebal diatas, tipis dibawah) */
+    .kop-line {
+      border-top: 3px solid #000;
+      border-bottom: 1px solid #000;
+      height: 2px;
+      margin-top: 6px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -203,19 +236,23 @@
         </div>
         
         <div id="print-area">
-          <div class="kop">
-            <!-- Logo -->
-            <div class="logo">
-              <img src="./logo kemensos only.png" style="width:50%;" alt="Logo Kemensos">
+          <!-- KOP SURAT LAPORAN -->
+          <div class="kop-container">
+            <div class="kop">
+              <div class="kop-logo">
+                <img src="./logo kemensos only.png" alt="Logo Kemensos">
+              </div>
+              <div class="kop-detail">
+                <div class="kop-title-bold">KEMENTERIAN SOSIAL REPUBLIK INDONESIA</div>
+                <div class="kop-title-bold">SEKRETARIAT JENDERAL</div>
+                <div class="kop-title-bold">PUSAT PENDIDIKAN, PELATIHAN, DAN PENGEMBANGAN PROFESI</div>
+                <div class="kop-title-large">SEKOLAH RAKYAT TERINTEGRASI 2 KOTA PASURUAN</div>
+                <div class="kop-address">Jl. Erlangga Selatan No. 17 Kel. Purworejo, Kec. Purworejo Kota Pasuruan,</div>
+                <div class="kop-address">Prov. Jawa Timur Pos-el: srmp28paskot@gmail.com Kode Pos: 67115</div>
+              </div>
             </div>
-            
-            <!-- Detail -->
-            <div class="detail">
-              <b style="font-size: 20px; text-transform: uppercase;">KEMENTERIAN SOSIAL REPUBLIK INDONESIA<br>SEKRETARIAT JENDERAL</b><br>
-              <b style="text-transform: uppercase;">PUSAT PENDIDIKAN, PELATIHAN, DAN PENGEMBANGAN PROFESI<br>SEKOLAH RAKYAT TERINTEGRASI 2 KOTA PASURUAN</b><br>
-              Jl. Erlangga Selatan No. 17 Kel. Purworejo, Kec. Purworejo Kota Pasuruan, Prov. Jawa Timur<br>
-              Pos-el: srmp28paskot@gmail.com Kode Pos: 67115
-            </div>
+            <!-- Garis Ganda Resmi Dinas -->
+            <div class="kop-line"></div>
           </div>
           
           <div style="text-align:center; margin-bottom:15px;">
@@ -483,7 +520,6 @@
         return;
       }
 
-      // Sembunyikan modal login admin secara langsung setelah tombol MASUK diklik
       closeAdminLoginModal();
 
       Swal.fire({
