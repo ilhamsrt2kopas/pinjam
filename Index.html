@@ -330,8 +330,11 @@
         
         let hasil = await response.json();
         
-        if (hasil.status === 'success') return hasil.data;
-        else throw new Error(hasil.message);
+        if (hasil && hasil.status === 'success') {
+          return hasil.data;
+        } else {
+          throw new Error(hasil && hasil.message ? hasil.message : 'Respon gagal dari server');
+        }
       } catch (error) {
         console.error("API Error:", error);
         throw error;
@@ -377,8 +380,11 @@
           let nipDecoded = atob(sessionToken); 
           let res = await panggilAPI({ action: 'login', nip: nipDecoded });
           
-          if(res && res.user) loginSuccess(res.user, res.sessionToken, true);
-          else logout(true);
+          if(res && res.user) {
+            loginSuccess(res.user, res.sessionToken, true);
+          } else {
+            logout(true);
+          }
         } catch(e) { 
           logout(true); 
         }
@@ -493,9 +499,13 @@
       });
 
       panggilAPI({ action: 'login', nip: scannedNip }).then(res => {
-        Swal.fire('Berhasil!', `Selamat datang, ${res.user.name}`, 'success');
-        loginSuccess(res.user, res.sessionToken, false);
-      }).catch(e => Swal.fire('Gagal Login', e.message, 'error'));
+        if (res && res.user) {
+          Swal.fire('Berhasil!', `Selamat datang, ${res.user.name}`, 'success');
+          loginSuccess(res.user, res.sessionToken, false);
+        } else {
+          throw new Error("Data user tidak ditemukan dari server.");
+        }
+      }).catch(e => Swal.fire('Gagal Login', e.message || 'Terjadi kesalahan sistem', 'error'));
     }
 
     // =========================================================
@@ -535,19 +545,23 @@
           password: password
         });
 
-        Swal.close();
-        loginSuccess(res.user, res.sessionToken, false);
+        if (res && res.user) {
+          Swal.close();
+          loginSuccess(res.user, res.sessionToken, false);
 
-        Swal.fire({
-          icon: 'success',
-          title: 'Login Berhasil',
-          text: `Selamat datang, ${res.user.name}!`,
-          timer: 1500,
-          showConfirmButton: false
-        });
+          Swal.fire({
+            icon: 'success',
+            title: 'Login Berhasil',
+            text: `Selamat datang, ${res.user.name}!`,
+            timer: 1500,
+            showConfirmButton: false
+          });
+        } else {
+          throw new Error("Data user tidak ditemukan dari server.");
+        }
 
       } catch (error) {
-        Swal.fire('Login Gagal', error.message || 'Terjadi kesalahan', 'error');
+        Swal.fire('Login Gagal', error.message || 'Terjadi kesalahan sistem', 'error');
       }
     }
 
