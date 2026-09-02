@@ -483,6 +483,9 @@
         return;
       }
 
+      // Sembunyikan modal login admin secara langsung setelah tombol MASUK diklik
+      closeAdminLoginModal();
+
       Swal.fire({
         title: 'Memproses Login...',
         allowOutsideClick: false,
@@ -497,8 +500,6 @@
         });
 
         Swal.close();
-        closeAdminLoginModal();
-
         loginSuccess(res.user, res.sessionToken, false);
 
         Swal.fire({
