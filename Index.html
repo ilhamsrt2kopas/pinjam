@@ -5,29 +5,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
-  <!-- PWA Meta Tags (Agar tampilan Full Screen tanpa URL) -->
+  <!-- PWA Meta Tags -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#2563eb">
   <title>Sistem Peminjaman Barang SRT 2 Kota Pasuruan</title>
 
-  
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-512.png">
   <link rel="manifest" href="manifest.json">
   
-  <!-- Memanggil library SweetAlert2 & HTML5-QRCode -->
+  <!-- Library SweetAlert2 & HTML5-QRCode -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
   
   <style>
     :root { --primary: #2563eb; --bg: #f3f4f6; --text: #1f2937; }
-    body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; -webkit-tap-highlight-color: transparent;}
+    body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; -webkit-tap-highlight-color: transparent; }
     * { box-sizing: border-box; }
     
     /* Navbar */
-    .navbar { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10;}
+    .navbar { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10; }
     .profile-info { display: flex; flex-direction: column; }
     .profile-info b { font-size: 16px; color: var(--primary); }
     .profile-info span { font-size: 12px; color: #6b7280; }
@@ -38,65 +37,67 @@
     h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 8px; }
     
     /* Buttons & Inputs */
-    button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; width: 100%; margin-top: 5px; cursor: pointer; transition: 0.2s;}
+    button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; width: 100%; margin-top: 5px; cursor: pointer; transition: 0.2s; }
     button:active { transform: scale(0.98); }
     button.btn-red { background: #ef4444; }
     button.btn-sm { width: auto; padding: 6px 12px; font-size: 12px; }
     input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px; }
     
     /* Lists */
-    .list-item { border-left: 4px solid var(--primary); padding: 10px; background: #f9fafb; margin-bottom: 10px; border-radius: 4px;}
+    .list-item { border-left: 4px solid var(--primary); padding: 10px; background: #f9fafb; margin-bottom: 10px; border-radius: 4px; }
     .list-item p { margin: 4px 0; font-size: 13px; }
     .badge { padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; background: #10b981; }
     .badge.late { background: #ef4444; }
     .badge.active { background: #f59e0b; }
     
     /* Bottom Navigation */
-    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #e5e7eb; display: none; padding-bottom: env(safe-area-inset-bottom); }
-    .nav-item { flex: 1; text-align: center; padding: 12px 0; font-size: 12px; font-weight: bold; color: #6b7280; cursor: pointer; border-bottom: 3px solid transparent;}
-    .nav-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #eff6ff;}
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #e5e7eb; display: none; padding-bottom: env(safe-area-inset-bottom); }
+    .nav-item { flex: 1; text-align: center; padding: 12px 0; font-size: 12px; font-weight: bold; color: #6b7280; cursor: pointer; border-bottom: 3px solid transparent; }
+    .nav-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #eff6ff; }
     
     .view-section { display: none; }
     .view-section.active { display: block; }
+
     /* Cetak Laporan */
-@media print {
-  body * { visibility: hidden; }
-  #print-area, #print-area * { visibility: visible; }
-  #print-area { 
-    position: absolute; 
-    left: 0; 
-    top: 0; 
-    width: 100%; 
-    color: black !important;
-  }
-  .navbar, .bottom-nav, button, input, select { display: none !important; }
-  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-  th, td { border: 1px solid #000; padding: 6px 8px; font-size: 11pt; text-align: left; }
-  th { background-color: #f2f2f2 !important; -webkit-print-color-adjust: exact; }
-}
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { 
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        color: black !important;
+      }
+      .navbar, .bottom-nav, button, input, select { display: none !important; }
+      table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+      th, td { border: 1px solid #000; padding: 6px 8px; font-size: 11pt; text-align: left; }
+      th { background-color: #f2f2f2 !important; -webkit-print-color-adjust: exact; }
+    }
+
     /* Kop Surat */
     .kop {
-  display: grid;
-  grid-template-columns: 25% 75%;
-  width: 100%;
-  height: 100%;
-  border-bottom:3px double #000;
-  margin-bottom: 15px;
-  text-align: center;
-  vertical-align: middle;
-}
-    .logo{
-max-width:100%;
-height:auto;
-vertical-align:middle;
-text-align:center;
-}
-.detail{
-max-width:100%;
-height:auto;
-vertical-align:middle;
-text-align:center;
-}
+      display: grid;
+      grid-template-columns: 25% 75%;
+      width: 100%;
+      height: 100%;
+      border-bottom: 3px double #000;
+      margin-bottom: 15px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .logo {
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .detail {
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -121,13 +122,11 @@ text-align:center;
     <!-- PUBLIC DASHBOARD -->
     <div id="view-public" class="view-section active">
       <div class="card" style="text-align: center;">
-        <img src="./logo sr.jpg" max width="20%" height="auto"></img>
+        <img src="./logo sr.jpg" style="max-width:20%; height:auto;" alt="Logo SRT">
         <h2>Sistem Peminjaman Barang SRT 2 Kota Pasuruan</h2>
         <p>Scan QR Code pada Kartu Pegawai Anda untuk masuk dan meminjam barang.</p>
         <button onclick="openScannerWindow()">📷 Scan QR</button>
-        <button onclick="openAdminLoginModal()" class="btn btn-dark" style="background-color: #333; color: #fff;">
-  🔐 Login Admin
-</button>
+        <button onclick="openAdminLoginModal()" style="background-color: #333; color: #fff; margin-top: 10px;">🔐 Login Admin</button>
       </div>
 
       <div class="card">
@@ -153,16 +152,16 @@ text-align:center;
     <div id="view-borrow" class="view-section">
       <div class="card">
         <h3>Form Peminjaman</h3>
-        <label>Pilih Barang:</label>
+        <label for="sel-barang">Pilih Barang:</label>
         <select id="sel-barang"></select>
         
         <div style="display:flex; gap:10px;">
           <div style="flex:1">
-            <label>Jumlah:</label>
+            <label for="in-qty">Jumlah:</label>
             <input type="number" id="in-qty" min="1" value="1">
           </div>
           <div style="flex:1">
-            <label>Rencana Kembali:</label>
+            <label for="in-time">Rencana Kembali:</label>
             <input type="time" id="in-time" required>
           </div>
         </div>
@@ -172,78 +171,79 @@ text-align:center;
         <h4>Daftar yang akan dipinjam:</h4>
         <ul id="cart-list" style="font-size:14px; padding-left:15px; margin-bottom:15px;"></ul>
         
-        <label>Tujuan Peminjaman:</label>
+        <label for="in-tujuan">Tujuan Peminjaman:</label>
         <textarea id="in-tujuan" rows="2" placeholder="Keperluan..."></textarea>
         
         <button onclick="submitPinjam()">Ajukan Peminjaman</button>
       </div>
     </div>
 
-   <!-- TAB: CETAK LAPORAN (ADMIN) -->
-<div id="view-users" class="view-section">
-  <div class="card">
-    <h3>Filter Laporan Peminjaman</h3>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <div style="flex:1; min-width:140px;">
-        <label>Dari Tanggal:</label>
-        <input type="date" id="rep-start">
-      </div>
-      <div style="flex:1; min-width:140px;">
-        <label>Sampai Tanggal:</label>
-        <input type="date" id="rep-end">
-      </div>
-    </div>
-    <button onclick="generateReport()" style="background:#2563eb; margin-top:10px;">🔍 Tampilkan Laporan</button>
-  </div>
-
-  <!-- Output & Preview Laporan -->
-  <div id="card-report-result" class="card" style="display:none;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h4 style="margin:0;">Preview Laporan</h4>
-      <button onclick="window.print()" class="btn-sm" style="background:#10b981; width:auto;">🖨️ Cetak / Save PDF</button>
-    </div>
-    
-    <div id="print-area">
-    <div id="kop">
-    
-      <!-- Logo -->
-      <div id="logo">
-        <img src="./logo kemensos only.png" width="100%">
-      </div>
-      
-      <!-- Detail -->
-      <div id="detail">
-        <b style="font-size: 20px; text-transform: uppercase;">KEMENTERIAN SOSIAL REPUBLIK INDONESIA<BR>SEKRETARIAT JENDERAL</b><br>
-        <b style="text-transform: uppercase;">PUSAT PENDIDIKAN, PELATIHAN, DAN PENGEMBANGAN PROFESI<BR>SEKOLAH RAKYAT TERINTEGRASI 2 KOTA PASURUAN</b>
-        <br>Jl. Erlangga Selatan No. 17 Kel. Purworejo, Kec. Purworejo Kota Pasuruan, Prov. Jawa Timur<br>Pos-el: srmp28paskot@gmail.com Kode Pos: 67115</br>
-      </div>
-      </div>
-      
-      <div style="text-align:center; margin-bottom:15px;">
-        <h3 style="margin:0; border:none; padding:0;">LAPORAN PEMINJAMAN BARANG</h3>
-        <p style="margin:5px 0; font-size:14px;" id="rep-period-text">Periode: Semua Data</p>
+    <!-- TAB: CETAK LAPORAN (ADMIN) -->
+    <div id="view-users" class="view-section">
+      <div class="card">
+        <h3>Filter Laporan Peminjaman</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:140px;">
+            <label for="rep-start">Dari Tanggal:</label>
+            <input type="date" id="rep-start">
+          </div>
+          <div style="flex:1; min-width:140px;">
+            <label for="rep-end">Sampai Tanggal:</label>
+            <input type="date" id="rep-end">
+          </div>
+        </div>
+        <button onclick="generateReport()" style="background:#2563eb; margin-top:10px;">🔍 Tampilkan Laporan</button>
       </div>
 
-      <div style="overflow-x:auto;">
-        <table style="width:100%; border-collapse: collapse; font-size:12px;">
-          <thead>
-            <tr style="background:#e5e7eb; text-align:left;">
-              <th style="padding:8px; border:1px solid #ccc;">No</th>
-              <th style="padding:8px; border:1px solid #ccc;">Peminjam</th>
-              <th style="padding:8px; border:1px solid #ccc;">Barang</th>
-              <th style="padding:8px; border:1px solid #ccc;">Qty</th>
-              <th style="padding:8px; border:1px solid #ccc;">Tgl Pinjam</th>
-              <th style="padding:8px; border:1px solid #ccc;">Status</th>
-            </tr>
-          </thead>
-          <tbody id="report-table-body">
-            <!-- Data laporan akan dirender di sini -->
-          </tbody>
-        </table>
+      <!-- Output & Preview Laporan -->
+      <div id="card-report-result" class="card" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h4 style="margin:0;">Preview Laporan</h4>
+          <button onclick="window.print()" class="btn-sm" style="background:#10b981; width:auto;">🖨️ Cetak / Save PDF</button>
+        </div>
+        
+        <div id="print-area">
+          <div class="kop">
+            <!-- Logo -->
+            <div class="logo">
+              <img src="./logo kemensos only.png" style="width:100%;" alt="Logo Kemensos">
+            </div>
+            
+            <!-- Detail -->
+            <div class="detail">
+              <b style="font-size: 20px; text-transform: uppercase;">KEMENTERIAN SOSIAL REPUBLIK INDONESIA<br>SEKRETARIAT JENDERAL</b><br>
+              <b style="text-transform: uppercase;">PUSAT PENDIDIKAN, PELATIHAN, DAN PENGEMBANGAN PROFESI<br>SEKOLAH RAKYAT TERINTEGRASI 2 KOTA PASURUAN</b><br>
+              Jl. Erlangga Selatan No. 17 Kel. Purworejo, Kec. Purworejo Kota Pasuruan, Prov. Jawa Timur<br>
+              Pos-el: srmp28paskot@gmail.com Kode Pos: 67115
+            </div>
+          </div>
+          
+          <div style="text-align:center; margin-bottom:15px;">
+            <h3 style="margin:0; border:none; padding:0;">LAPORAN PEMINJAMAN BARANG</h3>
+            <p style="margin:5px 0; font-size:14px;" id="rep-period-text">Periode: Semua Data</p>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse: collapse; font-size:12px;">
+              <thead>
+                <tr style="background:#e5e7eb; text-align:left;">
+                  <th style="padding:8px; border:1px solid #ccc;">No</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Peminjam</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Barang</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Qty</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Tgl Pinjam</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="report-table-body">
+                <!-- Data laporan akan dirender di sini -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <!-- BOTTOM NAVIGATION -->
   <div id="bottom-nav" class="bottom-nav">
@@ -252,39 +252,54 @@ text-align:center;
     <div class="nav-item admin-only" onclick="switchTab('users')" style="display:none;">Admin</div>
   </div>
 
+  <!-- Modal Login Admin -->
+  <div id="modalAdminLogin" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#fff; padding:20px; border-radius:8px; width:90%; max-width:350px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+      <h3 style="margin-top:0; text-align:center;">Login Khusus Admin</h3>
+      
+      <div style="margin-bottom:12px;">
+        <label for="adminNipInput" style="display:block; font-size:12px; margin-bottom:4px;">NIP Admin</label>
+        <input type="text" id="adminNipInput" placeholder="Masukkan NIP">
+      </div>
+      
+      <div style="margin-bottom:15px;">
+        <label for="adminPassInput" style="display:block; font-size:12px; margin-bottom:4px;">Password</label>
+        <input type="password" id="adminPassInput" placeholder="Masukkan Password">
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button onclick="closeAdminLoginModal()" style="flex:1; padding:8px; background:#ccc; color:#000;">Batal</button>
+        <button onclick="processAdminLogin()" style="flex:1; padding:8px; background:#007bff; color:#fff;">Masuk</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // =========================================================
-    // 1. PENGATURAN API & PWA (WAJIB DISESUAIKAN)
+    // 1. PENGATURAN API
     // =========================================================
-    
-    // 🔥 MASUKKAN URL WEB APP GOOGLE SCRIPT (Yang diakhiri /exec) DI SINI:
     const API_URL = "https://script.google.com/macros/s/AKfycbwO13pWgxuG9leCONp1ntnx3qzN55YEQsh2LUXKEHrTC8pT8CXRC52k3NDALeMiguRq/exec"; 
-
-
-    
-   // const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(pwaManifest));
-//    document.getElementById('pwa-manifest').setAttribute('href', manifestUrl);
 
     // =========================================================
     // 2. SISTEM PENGHUBUNG (FETCH API)
     // =========================================================
     async function panggilAPI(dataPayload) {
-  try {
-    let response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" }, 
-      body: JSON.stringify(dataPayload)
-    });
-    
-    let hasil = await response.json();
-    
-    if (hasil.status === 'success') return hasil.data;
-    else throw new Error(hasil.message);
-  } catch (error) {
-    console.error("API Error:", error);
-    throw error;
-  }
-}
+      try {
+        let response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+          body: JSON.stringify(dataPayload)
+        });
+        
+        let hasil = await response.json();
+        
+        if (hasil.status === 'success') return hasil.data;
+        else throw new Error(hasil.message);
+      } catch (error) {
+        console.error("API Error:", error);
+        throw error;
+      }
+    }
 
     // =========================================================
     // 3. LOGIKA APLIKASI UTAMA
@@ -343,7 +358,6 @@ text-align:center;
           todayLoans: (response && response.todayLoans) ? response.todayLoans : []
         };
       } catch (error) {
-        // Jangan munculkan alert error ini terus-menerus, tampilkan teks saja
         document.getElementById('public-items').innerHTML = `<p style="text-align:center; color:red;">Koneksi gagal. Cek URL Web App.</p>`;
         globalData = { barang: [], todayLoans: [] };
       }
@@ -357,7 +371,7 @@ text-align:center;
                     </div>`;
         });
       } else {
-        if(!hStok) hStok = '<p style="text-align:center; color:#888;">Belum ada data barang.</p>';
+        hStok = '<p style="text-align:center; color:#888;">Belum ada data barang.</p>';
       }
       document.getElementById('public-items').innerHTML = hStok;
       
@@ -401,15 +415,13 @@ text-align:center;
     }
 
     // =========================================================
-    // 4. SISTEM SCANNER QR BARU (OVERLAY)
+    // 4. SISTEM SCANNER QR
     // =========================================================
     let html5QrcodeScanner;
 
     function openScannerWindow() {
-      // Munculkan overlay hitam
       document.getElementById('scanner-modal').style.display = 'flex';
       
-      // Inisialisasi scanner jika belum ada
       if (!html5QrcodeScanner) {
         html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
           fps: 60, 
@@ -418,21 +430,16 @@ text-align:center;
         }, false);
       }
       
-      // Jalankan kamera
       html5QrcodeScanner.render((decodedText) => {
-        // Jika berhasil scan: matikan kamera & jalankan login
         closeScanner(); 
         prosesLoginQR(decodedText); 
       }, (errorMessage) => {
-        // Abaikan error saat proses scanning frame per frame
+        // Abaikan error per frame
       });
     }
 
     function closeScanner() {
-      // Sembunyikan overlay
       document.getElementById('scanner-modal').style.display = 'none';
-      
-      // Hentikan proses kamera
       if (html5QrcodeScanner) {
         html5QrcodeScanner.clear().catch(error => {
           console.error("Gagal mematikan kamera", error);
@@ -457,6 +464,56 @@ text-align:center;
     // =========================================================
     // 5. AUTENTIKASI & NAVIGASI
     // =========================================================
+    function openAdminLoginModal() {
+      document.getElementById('adminNipInput').value = '';
+      document.getElementById('adminPassInput').value = '';
+      document.getElementById('modalAdminLogin').style.display = 'flex';
+    }
+
+    function closeAdminLoginModal() {
+      document.getElementById('modalAdminLogin').style.display = 'none';
+    }
+
+    async function processAdminLogin() {
+      const nip = document.getElementById('adminNipInput').value.trim();
+      const password = document.getElementById('adminPassInput').value.trim();
+
+      if (!nip || !password) {
+        Swal.fire('Peringatan', 'NIP dan Password wajib diisi!', 'warning');
+        return;
+      }
+
+      Swal.fire({
+        title: 'Memproses Login...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      try {
+        const res = await panggilAPI({
+          action: 'loginAdmin',
+          nip: nip,
+          password: password
+        });
+
+        Swal.close();
+        closeAdminLoginModal();
+
+        loginSuccess(res.user, res.sessionToken, false);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Login Berhasil',
+          text: `Selamat datang, ${res.user.name}!`,
+          timer: 1500,
+          showConfirmButton: false
+        });
+
+      } catch (error) {
+        Swal.fire('Login Gagal', error.message || 'Terjadi kesalahan', 'error');
+      }
+    }
+
     function loginSuccess(user, token, isSilent) {
       currentUser = user;
       sessionToken = token;
@@ -515,7 +572,7 @@ text-align:center;
     }
 
     // =========================================================
-    // 6. TRANSAKSI
+    // 6. TRANSAKSI & LAPORAN
     // =========================================================
     function addCart() {
       let sel = document.getElementById('sel-barang');
@@ -565,7 +622,9 @@ text-align:center;
         await panggilAPI({ action: 'submitLoan', token: sessionToken, cart: cart, tujuan: tujuan });
         
         Swal.fire('Sukses!', 'Peminjaman berhasil dicatat.', 'success');
-        cart = []; renderCart(); document.getElementById('in-tujuan').value = '';
+        cart = []; 
+        renderCart(); 
+        document.getElementById('in-tujuan').value = '';
         loadPublicData();
         switchTab('dashboard');
       } catch (error) {
@@ -577,13 +636,25 @@ text-align:center;
       let reason = '';
       if(isLate) {
         const { value: text } = await Swal.fire({
-          title: 'Pengembalian Terlambat', input: 'textarea', inputLabel: 'Silakan masukkan alasan keterlambatan:', showCancelButton: true, confirmButtonText: 'Kirim & Akhiri', cancelButtonText: 'Batal'
+          title: 'Pengembalian Terlambat', 
+          input: 'textarea', 
+          inputLabel: 'Silakan masukkan alasan keterlambatan:', 
+          showCancelButton: true, 
+          confirmButtonText: 'Kirim & Akhiri', 
+          cancelButtonText: 'Batal'
         });
         if (text === undefined) return; 
         if (!text) return Swal.fire('Gagal', 'Alasan keterlambatan wajib diisi!', 'error');
         reason = text;
       } else {
-        const result = await Swal.fire({ title: 'Akhiri Peminjaman?', text: "Anda yakin ingin mengakhiri pinjaman barang ini?", icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Akhiri!', cancelButtonText: 'Batal' });
+        const result = await Swal.fire({ 
+          title: 'Akhiri Peminjaman?', 
+          text: "Anda yakin ingin mengakhiri pinjaman barang ini?", 
+          icon: 'question', 
+          showCancelButton: true, 
+          confirmButtonText: 'Ya, Akhiri!', 
+          cancelButtonText: 'Batal' 
+        });
         if (!result.isConfirmed) return;
       }
       
@@ -599,147 +670,66 @@ text-align:center;
     }
 
     async function generateReport() {
-  let startVal = document.getElementById('rep-start').value;
-  let endVal = document.getElementById('rep-end').value;
+      let startVal = document.getElementById('rep-start').value;
+      let endVal = document.getElementById('rep-end').value;
 
-  Swal.fire({
-    title: 'Mengambil Data Laporan...',
-    allowOutsideClick: false,
-    didOpen: () => { Swal.showLoading(); }
-  });
+      Swal.fire({
+        title: 'Mengambil Data Laporan...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
 
-  try {
-    let data = await panggilAPI({
-      action: 'getReportData',
-      token: sessionToken,
-      startDate: startVal,
-      endDate: endVal
-    });
+      try {
+        let data = await panggilAPI({
+          action: 'getReportData',
+          token: sessionToken,
+          startDate: startVal,
+          endDate: endVal
+        });
 
-    Swal.close();
-    document.getElementById('card-report-result').style.display = 'block';
+        Swal.close();
+        document.getElementById('card-report-result').style.display = 'block';
 
-    // Set teks periode
-    let periodText = 'Semua Data';
-    if(startVal && endVal) periodText = `${startVal} s/d ${endVal}`;
-    else if(startVal) periodText = `Mulai ${startVal}`;
-    else if(endVal) periodText = `Sampai ${endVal}`;
-    document.getElementById('rep-period-text').innerText = `Periode: ${periodText}`;
+        let periodText = 'Semua Data';
+        if(startVal && endVal) periodText = `${startVal} s/d ${endVal}`;
+        else if(startVal) periodText = `Mulai ${startVal}`;
+        else if(endVal) periodText = `Sampai ${endVal}`;
+        document.getElementById('rep-period-text').innerText = `Periode: ${periodText}`;
 
-    // Render tabel
-    let tbody = document.getElementById('report-table-body');
-    if(!data || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:10px;">Tidak ada data pada periode ini.</td></tr>`;
-      return;
+        let tbody = document.getElementById('report-table-body');
+        if(!data || data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:10px;">Tidak ada data pada periode ini.</td></tr>`;
+          return;
+        }
+
+        let html = '';
+        data.forEach((item, index) => {
+          html += `
+            <tr>
+              <td style="padding:8px; border:1px solid #ccc;">${index + 1}</td>
+              <td style="padding:8px; border:1px solid #ccc;">${item.namaPeminjam}</td>
+              <td style="padding:8px; border:1px solid #ccc;">${item.namaBarang}</td>
+              <td style="padding:8px; border:1px solid #ccc;">${item.qty}</td>
+              <td style="padding:8px; border:1px solid #ccc;">${formatDate(item.waktuPinjam)}</td>
+              <td style="padding:8px; border:1px solid #ccc;"><b>${item.status}</b></td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+
+      } catch (error) {
+        Swal.fire('Gagal Load Laporan', error.message || 'Terjadi kesalahan', 'error');
+      }
     }
-
-    let html = '';
-    data.forEach((item, index) => {
-      html += `
-        <tr>
-          <td style="padding:8px; border:1px solid #ccc;">${index + 1}</td>
-          <td style="padding:8px; border:1px solid #ccc;">${item.namaPeminjam}</td>
-          <td style="padding:8px; border:1px solid #ccc;">${item.namaBarang}</td>
-          <td style="padding:8px; border:1px solid #ccc;">${item.qty}</td>
-          <td style="padding:8px; border:1px solid #ccc;">${formatDate(item.waktuPinjam)}</td>
-          <td style="padding:8px; border:1px solid #ccc;"><b>${item.status}</b></td>
-        </tr>
-      `;
-    });
-    tbody.innerHTML = html;
-
-  } catch (error) {
-    Swal.fire('Gagal Load Laporan', error.message || 'Terjadi kesalahan', 'error');
-  }
-}
     
-    // Daftarkan Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('SW terdaftar'))
-      .catch(err => console.log('SW gagal', err));
-  });
-}
-    function openAdminLoginModal() {
-  document.getElementById('adminNipInput').value = '';
-  document.getElementById('adminPassInput').value = '';
-  document.getElementById('modalAdminLogin').style.display = 'flex';
-}
-
-function closeAdminLoginModal() {
-  document.getElementById('modalAdminLogin').style.display = 'none';
-}
-
-async function processAdminLogin() {
-  const nip = document.getElementById('adminNipInput').value.trim();
-  const password = document.getElementById('adminPassInput').value.trim();
-
-  if (!nip || !password) {
-    Swal.fire('Peringatan', 'NIP dan Password wajib diisi!', 'warning');
-    return;
-  }
-
-  Swal.fire({
-    title: 'Memproses Login...',
-    allowOutsideClick: false,
-    didOpen: () => { Swal.showLoading(); }
-  });
-
-  try {
-    const res = await panggilAPI({
-      action: 'loginAdmin',
-      nip: nip,
-      password: password
-    });
-
-    Swal.close();
-    closeAdminLoginModal();
-
-    // Simpan sesi login
-    sessionToken = res.sessionToken;
-    currentUser = res.user;
-    localStorage.setItem('sessionToken', sessionToken);
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Login Berhasil',
-      text: `Selamat datang, ${currentUser.name}!`,
-      timer: 1500,
-      showConfirmButton: false
-    }).then(() => {
-      // Refresh UI / Tampilan Aplikasi
-      if (typeof renderUserUI === 'function') renderUserUI();
-      else location.reload();
-    });
-
-  } catch (error) {
-    Swal.fire('Login Gagal', error.message || 'Terjadi kesalahan', 'error');
-  }
-}
-    
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW terdaftar'))
+          .catch(err => console.log('SW gagal', err));
+      });
+    }
   </script>
-    <!-- Modal Login Admin -->
-<div id="modalAdminLogin" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
-  <div style="background:#fff; padding:20px; border-radius:8px; width:90%; max-width:350px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
-    <h3 style="margin-top:0; text-align:center;">Login Khusus Admin</h3>
-    
-    <div style="margin-bottom:12px;">
-      <label style="display:block; font-size:12px; margin-bottom:4px;">NIP Admin</label>
-      <input type="text" id="adminNipInput" placeholder="Masukkan NIP" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
-    </div>
-    
-    <div style="margin-bottom:15px;">
-      <label style="display:block; font-size:12px; margin-bottom:4px;">Password</label>
-      <input type="password" id="adminPassInput" placeholder="Masukkan Password" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
-    </div>
-
-    <div style="display:flex; gap:10px;">
-      <button onclick="closeAdminLoginModal()" style="flex:1; padding:8px; background:#ccc; border:none; border-radius:4px; cursor:pointer;">Batal</button>
-      <button onclick="processAdminLogin()" style="flex:1; padding:8px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">Masuk</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
