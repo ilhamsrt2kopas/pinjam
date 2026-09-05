@@ -4,780 +4,775 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Superapp SRT 2 Kota Pasuruan</title>
+  
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#2563eb">
+  <title>SuperApp SRT 2 Kota Pasuruan</title>
 
-  <!-- Library SweetAlert2, HTML5-QRCode, & QRCode.js -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="manifest" href="manifest.json">
+  
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   
   <style>
-    :root { 
-      --primary: #2563eb; --primary-dark: #1d4ed8;
-      --bg: #f3f4f6; --text: #1f2937; 
-      --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6;
-    }
-
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; }
+    :root { --primary: #2563eb; --bg: #f3f4f6; --text: #1f2937; }
+    body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; -webkit-tap-highlight-color: transparent; }
     * { box-sizing: border-box; }
     
-    .navbar { background: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
-    .profile-info b { font-size: 15px; color: var(--primary); display:block; }
+    .navbar { background: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10; }
+    .profile-info { display: flex; flex-direction: column; }
+    .profile-info b { font-size: 15px; color: var(--primary); }
     .profile-info span { font-size: 11px; color: #6b7280; }
     
-    .container { padding: 15px; max-width: 800px; margin: 0 auto; }
-    .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    h3 { margin-top: 0; border-bottom: 2px solid #f3f4f6; padding-bottom: 8px; font-size: 15px; color: #111827; }
+    .container { padding: 15px; }
+    .card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 8px; }
     
-    button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; width: 100%; margin-top: 5px; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+    button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; width: 100%; margin-top: 5px; cursor: pointer; transition: 0.2s; }
     button:active { transform: scale(0.98); }
-    button.btn-red { background: var(--danger); }
-    button.btn-green { background: var(--success); }
-    button.btn-orange { background: var(--warning); }
+    button.btn-red { background: #ef4444; }
+    button.btn-green { background: #10b981; }
     button.btn-sm { width: auto; padding: 6px 12px; font-size: 12px; }
-    button.btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
-    input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
+    input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px; }
     
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-
-    .list-item { border-left: 4px solid var(--primary); padding: 10px; background: #f9fafb; margin-bottom: 10px; border-radius: 6px; }
-    .badge { padding: 3px 6px; border-radius: 6px; font-size: 10px; font-weight: bold; color: white; background: var(--success); display: inline-block; }
-    .badge.late, .badge.alpa { background: var(--danger); }
-    .badge.active, .badge.izin { background: var(--warning); }
-    .badge.sakit { background: var(--info); }
-    .badge.locked { background: #4b5563; }
-
-    .stats-box { text-align: center; padding: 8px; border-radius: 8px; background: #f3f4f6; }
-    .stats-box .num { font-size: 18px; font-weight: bold; }
-    .stats-box .label { font-size: 10px; color: #6b7280; text-transform: uppercase; }
+    .list-item { border-left: 4px solid var(--primary); padding: 10px; background: #f9fafb; margin-bottom: 10px; border-radius: 4px; }
+    .list-item p { margin: 4px 0; font-size: 13px; }
+    .badge { padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; background: #10b981; }
+    .badge.late { background: #ef4444; }
+    .badge.active { background: #f59e0b; }
     
-    .siswa-card { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f3f4f6; }
-    .siswa-info { flex-grow: 1; }
-    .siswa-info b { font-size: 13px; display: block; }
-    .siswa-info span { font-size: 11px; color: #6b7280; }
-    
-    .status-btn-group { display: flex; gap: 4px; }
-    .status-btn { padding: 6px 10px; font-size: 11px; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; color: #374151; cursor: pointer; font-weight: bold; }
-    .status-btn.selected-H { background: var(--success); color: white; border-color: var(--success); }
-    .status-btn.selected-S { background: var(--info); color: white; border-color: var(--info); }
-    .status-btn.selected-I { background: var(--warning); color: white; border-color: var(--warning); }
-    .status-btn.selected-A { background: var(--danger); color: white; border-color: var(--danger); }
-
-    /* Flash Efek Kamera Scan Continuous */
-    .flash-green { animation: flashAnimation 0.3s ease-in-out; }
-    @keyframes flashAnimation {
-      0% { background-color: rgba(16, 185, 129, 0.8); }
-      100% { background-color: transparent; }
-    }
-
-    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #e5e7eb; display: none; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
-    .nav-item { flex: 1; text-align: center; padding: 10px 0; font-size: 11px; font-weight: 600; color: #6b7280; cursor: pointer; }
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #e5e7eb; display: none; padding-bottom: env(safe-area-inset-bottom); z-index:20; }
+    .nav-item { flex: 1; text-align: center; padding: 10px 0; font-size: 11px; font-weight: bold; color: #6b7280; cursor: pointer; border-bottom: 3px solid transparent; }
     .nav-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #eff6ff; }
-    .nav-item span { display: block; font-size: 18px; margin-bottom: 2px; }
-
+    
     .view-section { display: none; }
     .view-section.active { display: block; }
 
-    /* PRINT AREA CETAK KARTU QR SISWA & LAPORAN */
-    @media print {
-      body * { visibility: hidden; }
-      #print-area, #print-area *, #print-qr-area, #print-qr-area * { visibility: visible; }
-      #print-area, #print-qr-area { position: absolute; left: 0; top: 0; width: 100%; color: black !important; }
-      .navbar, .bottom-nav, button, input, select { display: none !important; }
-      .qr-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 15px !important; }
-      .qr-card-item { border: 2px solid #000 !important; padding: 10px !important; page-break-inside: avoid; }
+    /* Flash Indikator untuk Scan Massal */
+    .flash-green { animation: flashGreen 0.4s ease-in-out; }
+    @keyframes flashGreen {
+      0% { background-color: rgba(16, 185, 129, 0.8); }
+      100% { background-color: white; }
     }
 
-    .qr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-    .qr-card-item { border: 1px solid #d1d5db; border-radius: 8px; padding: 12px; background: white; text-align: center; }
-    .qr-card-item div { display: flex; justify-content: center; margin: 8px 0; }
+    /* Print styling */
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 100%; color: black !important; }
+      .navbar, .bottom-nav, button, input, select { display: none !important; }
+      table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+      th, td { border: 1px solid #000; padding: 6px 8px; font-size: 11pt; text-align: left; }
+    }
+
+    /* Kop Surat */
+    .kop-container { width: 100%; margin-bottom: 15px; }
+    .kop { display: flex; align-items: center; width: 100%; }
+    .kop-logo { width: 120px; text-align: center; }
+    .kop-logo img { max-width: 80px; height: auto; }
+    .kop-detail { flex-grow: 1; text-align: center; padding-right: 80px; color: #000; }
+    .kop-title-bold { font-weight: bold; font-size: 13px; text-transform: uppercase; }
+    .kop-title-large { font-weight: bold; font-size: 14px; text-transform: uppercase; }
+    .kop-address { font-size: 10px; }
+    .kop-line { border-top: 3px solid #000; border-bottom: 1px solid #000; height: 2px; margin-top: 6px; margin-bottom: 15px; }
   </style>
 </head>
 <body>
 
-  <!-- CONTINUOUS SCANNER MODAL -->
-  <div id="scanner-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; flex-direction:column; justify-content:center; align-items:center;">
-    <div id="scan-flash-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
-    
-    <div style="color:white; text-align:center; margin-bottom:10px;">
-      <h3 style="color:white; margin:0 0 5px 0;" id="scanner-title">Continuous QR Scanner</h3>
-      <span id="scan-counter-badge" style="background:var(--success); padding:4px 12px; border-radius:12px; font-weight:bold; font-size:14px;">Terabsen: 0 Siswa</span>
-    </div>
-
-    <div id="reader" style="width: 100%; max-width: 350px; background: white; border-radius: 10px; overflow: hidden;"></div>
-    
-    <div style="display:flex; gap:10px; margin-top:15px; width:90%; max-width:350px;">
-      <button class="btn-red" onclick="closeScanner()">Tutup Kamera</button>
-    </div>
+  <!-- OVERLAY SCANNER SINGLE -->
+  <div id="scanner-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; flex-direction:column; justify-content:center; align-items:center;">
+    <h3 style="color:white; margin-bottom:15px;" id="scanner-title">Scan QR Code</h3>
+    <div id="reader" style="width: 100%; max-width: 350px; background: white; border-radius: 8px; overflow: hidden;"></div>
+    <button class="btn-red" style="width:auto; margin-top:20px; padding: 10px 20px;" onclick="closeScanner()">Tutup Kamera</button>
   </div>
 
   <!-- NAVBAR -->
   <div id="navbar" class="navbar" style="display: none;">
     <div class="profile-info">
-      <b id="user-name">Nama Pengguna</b>
-      <span id="user-role">Role - NIP</span>
+      <b id="user-name">Nama</b>
+      <span id="user-role">Role - NIP/NIS</span>
     </div>
     <button class="btn-red btn-sm" onclick="logout()">Logout</button>
   </div>
 
   <div class="container">
-    <!-- 1. PUBLIC LANDING -->
+    <!-- PUBLIC DASHBOARD -->
     <div id="view-public" class="view-section active">
       <div class="card" style="text-align: center;">
-        <h2 style="margin: 5px 0; font-size: 20px;">SUPERAPP SEKOLAH</h2>
-        <p style="font-size:13px; color:#6b7280; margin-bottom:15px;">Sekolah Rakyat Terintegrasi 2 Kota Pasuruan</p>
-        <button onclick="openAdminLoginModal()" style="background-color: #374151;">🔐 Login Guru / Pegawai (NIP)</button>
+        <img src="./logo sr.jpg" style="max-width:20%; height:auto;" alt="Logo SRT">
+        <h2>SuperApp SRT 2 Kota Pasuruan</h2>
+        <p>Scan QR Pegawai/Siswa untuk masuk ke aplikasi</p>
+        <button onclick="openScannerWindow('LOGIN')">📷 Scan QR Login</button>
+        <button onclick="openAdminLoginModal()" style="background-color: #333; color: #fff; margin-top: 10px;">🔐 Login Admin / Pegawai</button>
       </div>
+
       <div class="card">
-        <h3>Ringkasan Stok Barang Tersedia</h3>
+        <h3>Daftar Peminjaman Hari Ini</h3>
+        <div id="public-loans">Memuat...</div>
+      </div>
+
+      <div class="card">
+        <h3>Stok Barang Tersedia</h3>
         <div id="public-items">Memuat...</div>
       </div>
     </div>
 
-    <!-- 2. DASHBOARD -->
+    <!-- TAB: DASHBOARD -->
     <div id="view-dashboard" class="view-section">
-      <div class="card" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white;">
-        <h2 style="margin:0 0 5px 0; font-size: 18px;" id="welcome-text">Selamat Datang</h2>
-        <p style="margin:0; font-size: 12px; opacity: 0.9;">Monitor Kehadiran & Kartu Siswa Realtime Hari Ini</p>
-      </div>
-
-      <div class="grid-2">
-        <button onclick="switchTab('absensi')" style="padding: 12px; background: #10b981;">📋 Presensi Siswa</button>
-        <button onclick="switchTab('borrow')" style="padding: 12px; background: #2563eb;">📦 Pinjam Barang</button>
-      </div>
-
-      <!-- DASHBOARD REKAP KEHADIRAN & KARTU -->
-      <div class="card" style="margin-top:15px;">
-        <h3>⚠️ Siswa Tidak Hadir / Terkunci Hari Ini</h3>
-        <div id="dash-absent-list" style="font-size:13px;">Memuat rekap...</div>
-      </div>
-
       <div class="card">
-        <h3>💳 Daftar Kartu Siswa Hilang / Rusak</h3>
-        <div id="dash-card-issues" style="font-size:13px;">Memuat data kartu...</div>
+        <h3>Peminjaman Aktif Hari Ini</h3>
+        <div id="auth-loans">Memuat...</div>
       </div>
     </div>
 
-    <!-- 3. TAB ABSENSI SISWA -->
-    <div id="view-absensi" class="view-section">
-      <div class="card">
-        <h3>Kelola Presensi Siswa (320 Siswa)</h3>
-        
-        <div class="grid-2">
-          <div>
-            <label style="font-size: 11px; font-weight: bold;">Tanggal:</label>
-            <input type="date" id="absen-tanggal" onchange="loadDataAbsensi()">
-          </div>
-          <div>
-            <label style="font-size: 11px; font-weight: bold;">Sesi Absen:</label>
-            <select id="absen-sesi" onchange="loadDataAbsensi()">
-              <option value="1. Sesi Pagi / Masuk">1. Sesi Pagi / Masuk</option>
-              <option value="2. Sesi Siang / Dzuhur">2. Sesi Siang / Dzuhur</option>
-              <option value="3. Sesi Sore / Pulang">3. Sesi Sore / Pulang</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label style="font-size: 11px; font-weight: bold;">Filter Kelas:</label>
-          <select id="absen-kelas" onchange="renderSiswaList()">
-            <option value="ALL">Semua Kelas</option>
-          </select>
-        </div>
-
-        <div style="display:flex; gap: 8px;">
-          <input type="text" id="absen-search" placeholder="🔍 Cari Nama / NISN..." oninput="renderSiswaList()" style="margin-bottom:0;">
-          <button class="btn-sm btn-orange" style="white-space:nowrap;" onclick="openContinuousScanner()">📷 Scan Continuous</button>
-        </div>
-      </div>
-
-      <!-- LIVE COUNTER -->
-      <div class="card">
-        <div class="grid-4">
-          <div class="stats-box" style="border-bottom: 3px solid var(--success);">
-            <div class="num" id="cnt-hadir" style="color: var(--success);">0</div>
-            <div class="label">Hadir</div>
-          </div>
-          <div class="stats-box" style="border-bottom: 3px solid var(--info);">
-            <div class="num" id="cnt-sakit" style="color: var(--info);">0</div>
-            <div class="label">Sakit</div>
-          </div>
-          <div class="stats-box" style="border-bottom: 3px solid var(--warning);">
-            <div class="num" id="cnt-izin" style="color: var(--warning);">0</div>
-            <div class="label">Izin</div>
-          </div>
-          <div class="stats-box" style="border-bottom: 3px solid var(--danger);">
-            <div class="num" id="cnt-alpa" style="color: var(--danger);">0</div>
-            <div class="label">Alpa</div>
-          </div>
-        </div>
-        
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-          <button id="btn-toggle-mark-all" class="btn-sm btn-outline" onclick="toggleMarkAllHadir()">Tandai Semua Hadir</button>
-          <span style="font-size:11px; color:#6b7280;" id="total-siswa-count">Total: 0 Siswa</span>
-        </div>
-      </div>
-
-      <!-- DAFTAR SISWA -->
-      <div class="card" style="padding: 5px 15px;">
-        <div id="siswa-list-container">
-          <p style="text-align: center; color: #888;">Memuat data presensi...</p>
-        </div>
-      </div>
-
-      <button class="btn-green" style="font-size: 16px; padding: 12px;" onclick="submitAbsensi()">💾 Simpan Data Presensi</button>
-    </div>
-
-    <!-- 4. GENERATOR CETAK KARTU QR SISWA -->
-    <div id="view-qrgenerator" class="view-section admin-only">
-      <div class="card">
-        <h3>Cetak Kartu QR Code Siswa Massal</h3>
-        <div class="grid-2">
-          <div>
-            <label style="font-size: 11px; font-weight: bold;">Filter Kelas Cetak:</label>
-            <select id="qr-filter-kelas" onchange="renderQRGenerator()">
-              <option value="ALL">Semua Kelas</option>
-            </select>
-          </div>
-          <div style="display:flex; align-items:flex-end;">
-            <button class="btn-green" onclick="window.print()">🖨️ Cetak Kartu (Print/PDF)</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="print-qr-area" class="card">
-        <h4 style="text-align:center; margin-top:0;">KARTU PRESENSI SISWA - SRT 2 KOTA PASURUAN</h4>
-        <div id="qr-cards-container" class="qr-grid"></div>
-      </div>
-    </div>
-
-    <!-- 5. TAB PINJAM BARANG -->
+    <!-- TAB: PINJAM BARANG -->
     <div id="view-borrow" class="view-section">
       <div class="card">
         <h3>Form Peminjaman Barang</h3>
-        <label>Pilih Barang:</label>
+        <label for="sel-barang">Pilih Barang:</label>
         <select id="sel-barang"></select>
-        <div class="grid-2">
-          <div>
-            <label>Jumlah:</label>
+        
+        <div style="display:flex; gap:10px;">
+          <div style="flex:1">
+            <label for="in-qty">Jumlah:</label>
             <input type="number" id="in-qty" min="1" value="1">
           </div>
-          <div>
-            <label>Rencana Kembali:</label>
+          <div style="flex:1">
+            <label for="in-time">Rencana Kembali:</label>
             <input type="time" id="in-time" required>
           </div>
         </div>
-        <button onclick="addCart()" style="background:#10b981;">+ Tambah ke Keranjang</button>
-        <hr style="margin: 15px 0; border:none; border-top: 1px solid #eee;">
-        <ul id="cart-list" style="font-size:13px; padding-left:20px;"></ul>
-        <label>Tujuan Peminjaman:</label>
-        <textarea id="in-tujuan" rows="2" placeholder="Tuliskan keperluan..."></textarea>
+        <button onclick="addCart()" class="btn-green">+ Tambah ke Daftar</button>
+        
+        <hr style="margin: 15px 0;">
+        <h4>Daftar yang akan dipinjam:</h4>
+        <ul id="cart-list" style="font-size:14px; padding-left:15px; margin-bottom:15px;"></ul>
+        
+        <label for="in-tujuan">Tujuan Peminjaman:</label>
+        <textarea id="in-tujuan" rows="2" placeholder="Keperluan..."></textarea>
+        
         <button onclick="submitPinjam()">Ajukan Peminjaman</button>
       </div>
     </div>
 
-    <!-- 6. TAB LAPORAN -->
-    <div id="view-reports" class="view-section admin-only">
+    <!-- TAB BARU: PRESENSI SISWA (KHUSUS PEGAWAI / ADMIN) -->
+    <div id="view-presensi-siswa" class="view-section">
       <div class="card">
-        <h3>Laporan Sistem</h3>
-        <select id="rep-type">
-          <option value="absensi">Laporan Presensi Siswa</option>
-          <option value="peminjaman">Laporan Peminjaman Barang</option>
-        </select>
-        <div class="grid-2">
-          <div><label>Dari Tanggal:</label><input type="date" id="rep-start"></div>
-          <div><label>Sampai Tanggal:</label><input type="date" id="rep-end"></div>
+        <h3>Mode Presensi Siswa (320 Siswa)</h3>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+          <button onclick="setPresensiMode('SCAN')" id="btn-mode-scan" class="btn-green">📷 Scan QR Massal</button>
+          <button onclick="setPresensiMode('CLASS')" id="btn-mode-class" style="background:#6b7280;">📋 Per Kelas</button>
         </div>
-        <button onclick="generateReport()">🔍 Tampilkan Laporan</button>
+
+        <!-- MODE 1: CONTINUOUS SCANNER MASSAL -->
+        <div id="mode-scan-container">
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:6px; margin-bottom:10px; text-align:center;">
+            <p style="margin:0; font-size:12px; color:#1e40af;">Sesi Aktif: <b id="presensi-sesi-title">Sesi Pagi</b></p>
+            <h2 style="margin:5px 0; color:#2563eb;" id="scan-counter">0 Siswa Terabsen</h2>
+          </div>
+
+          <button onclick="startContinuousScan()" style="font-size:16px; padding:12px; background:#10b981;">▶️ Buka Kamera (Scan Beruntun)</button>
+          <button onclick="stopContinuousScan()" id="btn-stop-scan" class="btn-red" style="display:none; margin-top:5px;">⏹️ Hentikan Kamera</button>
+
+          <div id="continuous-reader" style="width:100%; max-width:350px; margin:10px auto; display:none; border:3px solid #10b981; border-radius:8px; overflow:hidden;"></div>
+
+          <h4 style="margin-top:15px;">Riwayat Scan Sesi Ini:</h4>
+          <div id="scan-history-feed" style="max-height:200px; overflow-y:auto; border:1px solid #e5e7eb; border-radius:6px; padding:8px; background:#fff;">
+            <p style="text-align:center; color:#9ca3af; font-size:12px;">Belum ada QR yang discan.</p>
+          </div>
+        </div>
+
+        <!-- MODE 2: CHECKLIST PER KELAS -->
+        <div id="mode-class-container" style="display:none;">
+          <label for="sel-kelas">Pilih Kelas:</label>
+          <select id="sel-kelas" onchange="loadStudentByClass()">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="7-A">Kelas 7-A</option>
+            <option value="7-B">Kelas 7-B</option>
+            <option value="8-A">Kelas 8-A</option>
+            <option value="8-B">Kelas 8-B</option>
+            <option value="9-A">Kelas 9-A</option>
+            <option value="9-B">Kelas 9-B</option>
+          </select>
+
+          <div id="class-student-list" style="margin-top:10px;">
+            <p style="text-align:center; color:#888;">Pilih kelas untuk memuat daftar siswa.</p>
+          </div>
+
+          <button onclick="submitClassAttendance()" id="btn-submit-class" class="btn-green" style="display:none; margin-top:15px;">💾 Simpan Presensi Kelas</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: CETAK LAPORAN (ADMIN) -->
+    <div id="view-users" class="view-section">
+      <div class="card">
+        <h3>Filter Laporan Peminjaman & Presensi</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:140px;">
+            <label for="rep-start">Dari Tanggal:</label>
+            <input type="date" id="rep-start">
+          </div>
+          <div style="flex:1; min-width:140px;">
+            <label for="rep-end">Sampai Tanggal:</label>
+            <input type="date" id="rep-end">
+          </div>
+        </div>
+        <button onclick="generateReport()" style="background:#2563eb; margin-top:10px;">🔍 Tampilkan Laporan</button>
       </div>
 
       <div id="card-report-result" class="card" style="display:none;">
-        <button onclick="window.print()" class="btn-sm btn-green" style="float:right;">🖨️ Cetak / Save PDF</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h4 style="margin:0;">Preview Laporan</h4>
+          <button onclick="window.print()" class="btn-sm btn-green" style="width:auto;">🖨️ Cetak / Save PDF</button>
+        </div>
+        
         <div id="print-area">
-          <h3 style="text-align:center;" id="rep-header-title">LAPORAN PRESENSI SISWA</h3>
-          <p style="text-align:center; font-size:12px;" id="rep-period-text"></p>
-          <table id="report-table" border="1" style="width:100%; border-collapse:collapse; font-size:11px;">
-            <thead id="report-table-head"></thead>
-            <tbody id="report-table-body"></tbody>
-          </table>
+          <div class="kop-container">
+            <div class="kop">
+              <div class="kop-logo">
+                <img src="./logo kemensos only.png" alt="Logo Kemensos">
+              </div>
+              <div class="kop-detail">
+                <div class="kop-title-bold">KEMENTERIAN SOSIAL REPUBLIK INDONESIA</div>
+                <div class="kop-title-bold">SEKRETARIAT JENDERAL</div>
+                <div class="kop-title-bold">PUSAT PENDIDIKAN, PELATIHAN, DAN PENGEMBANGAN PROFESI</div>
+                <div class="kop-title-large">SEKOLAH RAKYAT TERINTEGRASI 2 KOTA PASURUAN</div>
+                <div class="kop-address">Jl. Erlangga Selatan No. 17 Kel. Purworejo, Kec. Purworejo Kota Pasuruan</div>
+              </div>
+            </div>
+            <div class="kop-line"></div>
+          </div>
+          
+          <div style="text-align:center; margin-bottom:15px;">
+            <h3 style="margin:0; border:none; padding:0;">LAPORAN PEMINJAMAN & PRESENSI</h3>
+            <p style="margin:5px 0; font-size:13px;" id="rep-period-text">Periode: Semua Data</p>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse: collapse; font-size:12px;">
+              <thead>
+                <tr style="background:#e5e7eb; text-align:left;">
+                  <th style="padding:8px; border:1px solid #ccc;">No</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Nama/ID</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Aktivitas</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Detail</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Waktu</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="report-table-body"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
+  <!-- BOTTOM NAVIGATION -->
   <div id="bottom-nav" class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('dashboard')"><span>🏠</span>Dashboard</div>
-    <div class="nav-item" onclick="switchTab('absensi')"><span>📋</span>Absensi</div>
-    <div class="nav-item admin-only" onclick="switchTab('qrgenerator')" style="display:none;"><span>🎴</span>Kartu QR</div>
-    <div class="nav-item" onclick="switchTab('borrow')"><span>📦</span>Pinjam</div>
-    <div class="nav-item admin-only" onclick="switchTab('reports')" style="display:none;"><span>📊</span>Laporan</div>
+    <div class="nav-item active" onclick="switchTab('dashboard')">Dashboard</div>
+    <div class="nav-item" onclick="switchTab('borrow')">Pinjam</div>
+    <div class="nav-item staff-only" onclick="switchTab('presensi-siswa')" style="display:none;">Absen Siswa</div>
+    <div class="nav-item admin-only" onclick="switchTab('users')" style="display:none;">Admin</div>
   </div>
 
-  <!-- MODAL LOGIN -->
+  <!-- Modal Login Admin/Pegawai -->
   <div id="modalAdminLogin" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:#fff; padding:20px; border-radius:10px; width:90%; max-width:350px;">
-      <h3 style="margin-top:0; text-align:center;">Login Pegawai / Admin</h3>
-      <input type="text" id="adminNipInput" placeholder="NIP Pegawai">
-      <input type="password" id="adminPassInput" placeholder="Password">
+    <div style="background:#fff; padding:20px; border-radius:8px; width:90%; max-width:350px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+      <h3 style="margin-top:0; text-align:center;">Login Admin / Pegawai</h3>
+      
+      <div style="margin-bottom:12px;">
+        <label for="adminNipInput" style="display:block; font-size:12px; margin-bottom:4px;">NIP / ID User</label>
+        <input type="text" id="adminNipInput" placeholder="Masukkan NIP">
+      </div>
+      
+      <div style="margin-bottom:15px;">
+        <label for="adminPassInput" style="display:block; font-size:12px; margin-bottom:4px;">Password</label>
+        <input type="password" id="adminPassInput" placeholder="Masukkan Password">
+      </div>
+
       <div style="display:flex; gap:10px;">
-        <button onclick="closeAdminLoginModal()" style="background:#9ca3af;">Batal</button>
-        <button onclick="processAdminLogin()" style="background:#2563eb;">Masuk</button>
+        <button onclick="closeAdminLoginModal()" style="flex:1; background:#ccc; color:#000;">Batal</button>
+        <button onclick="processAdminLogin()" style="flex:1; background:#007bff; color:#fff;">Masuk</button>
       </div>
     </div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwO13pWgxuG9leCONp1ntnx3qzN55YEQsh2LUXKEHrTC8pT8CXRC52k3NDALeMiguRq/exec";
+    // =========================================================
+    // 1. PENGATURAN API & STATE
+    // =========================================================
+    const API_URL = "https://script.google.com/macros/s/AKfycbwO13pWgxuG9leCONp1ntnx3qzN55YEQsh2LUXKEHrTC8pT8CXRC52k3NDALeMiguRq/exec"; 
 
-    let globalData = { barang: [], todayLoans: [], siswaList: [], kelasList: [] };
-    let sessionToken = localStorage.getItem('superapp_session');
+    let globalData = { barang: [], todayLoans: [] };
+    let sessionToken = localStorage.getItem('pb_session');
     let currentUser = null;
     let cart = [];
+    
+    // Continuous Scanner State
+    let continuousScanner = null;
+    let scannedNisSet = new Set();
+    let sessionScanCount = 0;
 
-    // State Presensi & Undo State
-    let currentAbsensiMap = {};
-    let currentKeteranganMap = {};
-    let sesi1AbsensiMap = {};
-    let previousAbsensiState = null;
-    let scannedInSessionSet = new Set();
-    let html5QrCode = null;
+    const Toast = Swal.mixin({ toast: true, position: 'top', showConfirmButton: false, timer: 2500, timerProgressBar: true });
 
-    const Toast = Swal.mixin({ toast: true, position: 'top', showConfirmButton: false, timer: 2000 });
-    document.getElementById('absen-tanggal').valueAsDate = new Date();
+    const formatDate = (dateStr) => {
+      if(!dateStr) return '-';
+      const d = new Date(dateStr);
+      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth()+1).padStart(2, '0')}/${d.getFullYear()} - ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    };
 
-    async function panggilAPI(payload) {
+    // Suara Beep Konfirmasi Scan Instan tanpa file audio eksternal (Web Audio API)
+    function playBeepSound() {
       try {
-        let response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime); // 880 Hz (Tone A5)
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+      } catch(e) {}
+    }
+
+    async function panggilAPI(dataPayload) {
+      try {
+        let response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+          body: JSON.stringify(dataPayload)
+        });
         let hasil = await response.json();
-        if (hasil && hasil.status === 'success') return hasil.data;
-        throw new Error(hasil && hasil.message ? hasil.message : 'Respon gagal');
-      } catch (error) { throw error; }
+        if (hasil && hasil.status === 'success') {
+          return hasil.data;
+        } else {
+          throw new Error(hasil && hasil.message ? hasil.message : 'Respon gagal dari server');
+        }
+      } catch (error) {
+        console.error("API Error:", error);
+        throw error;
+      }
     }
 
     window.onload = async () => {
       loadPublicData();
       if(sessionToken) {
         try {
-          let nipDec = atob(sessionToken); 
-          let res = await panggilAPI({ action: 'login', nip: nipDec });
-          if(res && res.user) loginSuccess(res.user, res.sessionToken);
-          else logout();
-        } catch(e) { logout(); }
+          let nipDecoded = atob(sessionToken); 
+          let res = await panggilAPI({ action: 'login', nip: nipDecoded });
+          if(res && res.user) loginSuccess(res.user, res.sessionToken, true);
+          else logout(true);
+        } catch(e) { logout(true); }
       }
     };
 
     async function loadPublicData() {
       try {
-        let res = await panggilAPI({ action: 'getPublicData' });
-        globalData.barang = res.barang || [];
-        renderPublicItems();
-      } catch (e) {}
-    }
-
-    function renderPublicItems() {
-      let h = '';
-      globalData.barang.forEach(b => {
-        h += `<div class="list-item"><b>${b.nama}</b><br><span style="font-size:12px">Total: ${b.total} | Tersedia: <b style="color:green">${b.sisa}</b></span></div>`;
-      });
-      document.getElementById('public-items').innerHTML = h || '<p>Tidak ada barang.</p>';
-
+        document.getElementById('public-items').innerHTML = '<p style="text-align:center;">Memuat stok...</p>';
+        let response = await panggilAPI({ action: 'getPublicData' });
+        globalData = {
+          barang: (response && response.barang) ? response.barang : [],
+          todayLoans: (response && response.todayLoans) ? response.todayLoans : []
+        };
+      } catch (error) {
+        document.getElementById('public-items').innerHTML = `<p style="text-align:center; color:red;">Koneksi gagal.</p>`;
+        globalData = { barang: [], todayLoans: [] };
+      }
+      
+      let hStok = '';
+      if (globalData.barang.length > 0) {
+        globalData.barang.forEach(b => {
+          hStok += `<div class="list-item"><b>${b.nama}</b><br><span style="font-size:12px">Total: ${b.total} | Tersedia: <b style="color:green">${b.sisa}</b></span></div>`;
+        });
+      } else {
+        hStok = '<p style="text-align:center; color:#888;">Belum ada data barang.</p>';
+      }
+      document.getElementById('public-items').innerHTML = hStok;
+      
       let hSel = '<option value="">-- Pilih Barang --</option>';
       globalData.barang.forEach(b => { hSel += `<option value="${b.kode}">${b.nama} (Sisa ${b.sisa})</option>`; });
       document.getElementById('sel-barang').innerHTML = hSel;
+
+      renderLoans();
     }
 
-    function loginSuccess(user, token) {
-      currentUser = user; sessionToken = token;
-      localStorage.setItem('superapp_session', token);
-      document.getElementById('user-name').innerText = user.name;
-      document.getElementById('user-role').innerText = `${user.role} - NIP: ${user.nip}`;
-      document.getElementById('welcome-text').innerText = `Halo, ${user.name}!`;
-      document.getElementById('navbar').style.display = 'flex';
-      document.getElementById('bottom-nav').style.display = 'flex';
-      if(user.role === 'Admin') document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-      document.getElementById('view-public').classList.remove('active');
-      switchTab('dashboard');
-      loadDashboardSummary();
-      loadDataAbsensi();
-    }
+    function renderLoans() {
+      let hLoans = '';
+      if(globalData.todayLoans.length === 0) hLoans = '<p style="text-align:center; color:#888;">Belum ada peminjaman.</p>';
+      
+      globalData.todayLoans.forEach(l => {
+        let isMine = currentUser && (currentUser.nip == l.nip);
+        let isAdmin = currentUser && (currentUser.role === 'Admin');
+        let btnAkhiri = (l.status === 'DIPINJAM' && currentUser && (isMine || isAdmin)) 
+          ? `<button class="btn-red btn-sm" onclick="endLoan('${l.detailId}')">Akhiri Pinjaman</button>` : '';
 
-    function logout() {
-      localStorage.removeItem('superapp_session');
-      currentUser = null; sessionToken = null;
-      document.getElementById('navbar').style.display = 'none';
-      document.getElementById('bottom-nav').style.display = 'none';
-      document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      document.getElementById('view-public').classList.add('active');
-      loadPublicData();
-    }
-
-    function openAdminLoginModal() { document.getElementById('modalAdminLogin').style.display = 'flex'; }
-    function closeAdminLoginModal() { document.getElementById('modalAdminLogin').style.display = 'none'; }
-    async function processAdminLogin() {
-      const nip = document.getElementById('adminNipInput').value.trim();
-      const password = document.getElementById('adminPassInput').value.trim();
-      if (!nip || !password) return Swal.fire('Peringatan', 'Isi NIP dan Password!', 'warning');
-      closeAdminLoginModal();
-      Swal.fire({ title: 'Verifikasi...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-      try {
-        const res = await panggilAPI({ action: 'loginAdmin', nip, password });
-        if (res && res.user) { Swal.close(); loginSuccess(res.user, res.sessionToken); }
-      } catch (e) { Swal.fire('Gagal Login', e.message, 'error'); }
-    }
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      document.getElementById('view-' + tabId).classList.add('active');
-      let nav = document.querySelector(`.nav-item[onclick*='${tabId}']`);
-      if(nav) nav.classList.add('active');
-      if(tabId === 'qrgenerator') renderQRGenerator();
-      if(tabId === 'dashboard') loadDashboardSummary();
-    }
-
-    // -------------------------------------------------------------------------
-    // DASHBOARD SUMMARY (REKAP UNATTENDED & KARTU HILANG/RUSAK)
-    // -------------------------------------------------------------------------
-    async function loadDashboardSummary() {
-      try {
-        let res = await panggilAPI({ action: 'getDashboardSummary' });
-        
-        // Rekap Siswa Tidak Hadir
-        let hAb = '';
-        (res.tidakHadirToday || []).forEach(item => {
-          let stBadge = item.status === 'S' ? '<span class="badge sakit">SAKIT</span>' : (item.status === 'I' ? '<span class="badge izin">IZIN</span>' : '<span class="badge alpa">ALPA</span>');
-          hAb += `<div class="list-item"><b>${item.nama}</b> (${item.kelas}) - Sesi: ${item.sesi} ${stBadge}<br><span style="font-size:11px; color:#6b7280;">Ket: ${item.keterangan}</span></div>`;
-        });
-        document.getElementById('dash-absent-list').innerHTML = hAb || '<p style="color:#10b981;">✅ Semua siswa hadir pada sesi berlangsung hari ini!</p>';
-
-        // Rekap Kartu Rusak/Hilang
-        let hK = '';
-        (res.kartuBermasalah || []).forEach(k => {
-          let col = k.statusKartu === 'Hilang' ? 'badge alpa' : 'badge active';
-          hK += `<div class="list-item"><b>${k.nama}</b> (${k.kelas}) - NISN: ${k.nisn} <span class="${col}">${k.statusKartu.toUpperCase()}</span></div>`;
-        });
-        document.getElementById('dash-card-issues').innerHTML = hK || '<p style="color:#10b981;">✅ Tidak ada laporan kartu hilang/rusak.</p>';
-      } catch(e) {}
-    }
-
-    // -------------------------------------------------------------------------
-    // ABSENSI SISWA & LOCK RULE (REQ 2, 7, 8)
-    // -------------------------------------------------------------------------
-    async function loadDataAbsensi() {
-      let tgl = document.getElementById('absen-tanggal').value;
-      let sesi = document.getElementById('absen-sesi').value;
-      try {
-        let res = await panggilAPI({ action: 'getAbsensiData', token: sessionToken, tanggal: tgl, sesi: sesi });
-        globalData.siswaList = res.siswa || [];
-        globalData.kelasList = res.kelas || [];
-        currentAbsensiMap = res.existingAbsensi || {};
-        currentKeteranganMap = res.existingKeterangan || {};
-        sesi1AbsensiMap = res.sesi1Absensi || {};
-        previousAbsensiState = null;
-        document.getElementById('btn-toggle-mark-all').innerText = "Tandai Semua Hadir";
-
-        let selectK = document.getElementById('absen-kelas');
-        selectK.innerHTML = '<option value="ALL">Semua Kelas</option>';
-        globalData.kelasList.forEach(k => { selectK.innerHTML += `<option value="${k}">${k}</option>`; });
-
-        let selectQ = document.getElementById('qr-filter-kelas');
-        selectQ.innerHTML = '<option value="ALL">Semua Kelas</option>';
-        globalData.kelasList.forEach(k => { selectQ.innerHTML += `<option value="${k}">${k}</option>`; });
-
-        renderSiswaList();
-      } catch(e) {}
-    }
-
-    function renderSiswaList() {
-      let selK = document.getElementById('absen-kelas').value;
-      let q = document.getElementById('absen-search').value.toLowerCase().trim();
-      let sesiCurrent = document.getElementById('absen-sesi').value;
-      let isSubsequentSession = sesiCurrent.indexOf('1.') === -1 && sesiCurrent.toLowerCase().indexOf('pagi') === -1;
-
-      let filtered = globalData.siswaList.filter(s => {
-        let matchK = (selK === 'ALL') || (s.kelas === selK);
-        let matchQ = s.nama.toLowerCase().includes(q) || String(s.nisn).includes(q);
-        return matchK && matchQ;
-      });
-
-      let container = document.getElementById('siswa-list-container');
-      if(filtered.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#888; padding:15px;">Tidak ada data siswa.</p>';
-        updateAbsensiCounters(); return;
-      }
-
-      let html = '';
-      filtered.forEach(s => {
-        let st = currentAbsensiMap[s.nisn] || '';
-        let status1 = sesi1AbsensiMap[s.nisn] || '';
-        
-        // LOCK RULE: Sesi 2/3 Terkunci jika Sesi 1 bukan Hadir ('H')
-        let isLocked = isSubsequentSession && (status1 !== 'H') && (!currentKeteranganMap[s.nisn]);
-
-        let cardBadge = s.statusKartu !== 'Normal' ? `<span class="badge alpa" style="font-size:9px;">💳 ${s.statusKartu}</span>` : '';
-        let lockBadge = isLocked ? `<span class="badge locked" style="font-size:9px;">🔒 Terkunci (Absen Pagi Kosong/Alpa)</span>` : '';
-
-        html += `
-          <div class="siswa-card">
-            <div class="siswa-info">
-              <b>${s.nama} ${cardBadge} ${lockBadge}</b>
-              <span>NISN: ${s.nisn} | ${s.kelas}</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:6px;">
-              <button class="btn-sm btn-outline" style="padding:3px 6px;" onclick="promptChangeStatusKartu('${s.nisn}', '${s.statusKartu}')">💳</button>
-              <div class="status-btn-group">
-                <button class="status-btn ${st==='H'?'selected-H':''}" onclick="setAbsenStatus('${s.nisn}', 'H', ${isLocked})">H</button>
-                <button class="status-btn ${st==='S'?'selected-S':''}" onclick="setAbsenStatus('${s.nisn}', 'S', ${isLocked})">S</button>
-                <button class="status-btn ${st==='I'?'selected-I':''}" onclick="setAbsenStatus('${s.nisn}', 'I', ${isLocked})">I</button>
-                <button class="status-btn ${st==='A'?'selected-A':''}" onclick="setAbsenStatus('${s.nisn}', 'A', ${isLocked})">A</button>
-              </div>
-            </div>
+        hLoans += `
+          <div class="list-item">
+            <b>${l.namaPeminjam}</b> <span class="badge ${l.status === 'SELESAI' ? '' : 'active'}" style="float:right">${l.status}</span>
+            <p>📦 ${l.qty}x ${l.namaBarang}</p>
+            <p>⏱️ Pinjam: ${formatDate(l.waktuPinjam)}</p>
+            ${btnAkhiri}
           </div>
         `;
       });
 
-      container.innerHTML = html;
-      document.getElementById('total-siswa-count').innerText = `Total: ${filtered.length} Siswa`;
-      updateAbsensiCounters();
+      document.getElementById('public-loans').innerHTML = hLoans;
+      if(currentUser) document.getElementById('auth-loans').innerHTML = hLoans;
     }
 
-    async function setAbsenStatus(nisn, status, isLocked) {
-      if(isLocked) {
-        const { value: text, isConfirmed } = await Swal.fire({
-          title: 'Siswa Terkunci!',
-          text: 'Siswa ini tidak hadir pada Sesi 1. Berikan Keterangan Izin Pengabsen untuk membuka kunci:',
-          input: 'text',
-          inputPlaceholder: 'Contoh: Terlambat karena sakit, izin Pak Guru',
-          showCancelButton: true,
-          inputValidator: (val) => !val && 'Wajib mengisi keterangan izin!'
-        });
-        if(!isConfirmed) return;
-        currentKeteranganMap[nisn] = text;
-      }
-
-      if(currentAbsensiMap[nisn] === status) delete currentAbsensiMap[nisn];
-      else currentAbsensiMap[nisn] = status;
-      renderSiswaList();
-    }
-
-    function toggleMarkAllHadir() {
-      let btn = document.getElementById('btn-toggle-mark-all');
-      let selK = document.getElementById('absen-kelas').value;
-
-      if(previousAbsensiState === null) {
-        // Simpan State awal untuk Undo
-        previousAbsensiState = JSON.parse(JSON.stringify(currentAbsensiMap));
-        globalData.siswaList.forEach(s => {
-          if(selK === 'ALL' || s.kelas === selK) currentAbsensiMap[s.nisn] = 'H';
-        });
-        btn.innerText = "↩️ Batalkan Tandai Semua";
-        Toast.fire({ icon: 'success', title: 'Ditandai HADIR semua' });
+    // =========================================================
+    // 2. CONTINUOUS SCANNER UNTUK ABSENSI 320 SISWA
+    // =========================================================
+    function setPresensiMode(mode) {
+      if(mode === 'SCAN') {
+        document.getElementById('mode-scan-container').style.display = 'block';
+        document.getElementById('mode-class-container').style.display = 'none';
+        document.getElementById('btn-mode-scan').style.background = '#10b981';
+        document.getElementById('btn-mode-class').style.background = '#6b7280';
       } else {
-        // Restore State Awal (Undo)
-        currentAbsensiMap = JSON.parse(JSON.stringify(previousAbsensiState));
-        previousAbsensiState = null;
-        btn.innerText = "Tandai Semua Hadir";
-        Toast.fire({ icon: 'info', title: 'Dibatalkan (Undo)' });
-      }
-      renderSiswaList();
-    }
-
-    function updateAbsensiCounters() {
-      let h = 0, s = 0, i = 0, a = 0;
-      Object.values(currentAbsensiMap).forEach(v => {
-        if(v === 'H') h++; else if(v === 'S') s++; else if(v === 'I') i++; else if(v === 'A') a++;
-      });
-      document.getElementById('cnt-hadir').innerText = h;
-      document.getElementById('cnt-sakit').innerText = s;
-      document.getElementById('cnt-izin').innerText = i;
-      document.getElementById('cnt-alpa').innerText = a;
-    }
-
-    async function promptChangeStatusKartu(nisn, currentSt) {
-      const { value: st } = await Swal.fire({
-        title: 'Status Kartu Siswa',
-        input: 'select',
-        inputOptions: { 'Normal': 'Normal (Bisa Digunakan)', 'Hilang': 'Kartu Hilang', 'Rusak': 'Kartu Rusak' },
-        inputValue: currentSt,
-        showCancelButton: true
-      });
-      if(st) {
-        Swal.fire({ title: 'Memproses...', didOpen: () => Swal.showLoading() });
-        try {
-          await panggilAPI({ action: 'updateStatusKartu', token: sessionToken, nisn: nisn, statusKartu: st });
-          Swal.fire('Sukses', 'Status kartu diperbarui', 'success');
-          loadDataAbsensi();
-        } catch(e) { Swal.fire('Gagal', e.message, 'error'); }
+        document.getElementById('mode-scan-container').style.display = 'none';
+        document.getElementById('mode-class-container').style.display = 'block';
+        document.getElementById('btn-mode-scan').style.background = '#6b7280';
+        document.getElementById('btn-mode-class').style.background = '#10b981';
+        stopContinuousScan();
       }
     }
 
-    async function submitAbsensi() {
-      let tgl = document.getElementById('absen-tanggal').value;
-      let sesi = document.getElementById('absen-sesi').value;
-      if(Object.keys(currentAbsensiMap).length === 0) return Swal.fire('Peringatan', 'Presensi masih kosong!', 'warning');
+    function startContinuousScan() {
+      document.getElementById('continuous-reader').style.display = 'block';
+      document.getElementById('btn-stop-scan').style.display = 'block';
 
-      Swal.fire({ title: 'Menyimpan Presensi...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-      try {
-        await panggilAPI({
-          action: 'submitAbsensi', token: sessionToken,
-          tanggal: tgl, sesi: sesi, dataAbsensi: currentAbsensiMap, keteranganMap: currentKeteranganMap
-        });
-        Swal.fire('Berhasil!', `Presensi ${sesi} disimpan.`, 'success');
-      } catch(e) { Swal.fire('Gagal Simpan', e.message, 'error'); }
+      if (!continuousScanner) {
+        continuousScanner = new Html5QrcodeScanner("continuous-reader", { 
+          fps: 15, 
+          qrbox: { width: 220, height: 220 },
+          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+        }, false);
+      }
+
+      continuousScanner.render(onStudentQrScanned, (err) => {});
     }
 
-    // -------------------------------------------------------------------------
-    // CONTINUOUS QR SCANNER ENGINE (REQ 3)
-    // -------------------------------------------------------------------------
-    function openContinuousScanner() {
-      scannedInSessionSet.clear();
-      document.getElementById('scanner-modal').style.display = 'flex';
-      updateScanCounterBadge();
+    function stopContinuousScan() {
+      if (continuousScanner) {
+        continuousScanner.clear().catch(e => console.error(e));
+        continuousScanner = null;
+      }
+      document.getElementById('continuous-reader').style.display = 'none';
+      document.getElementById('btn-stop-scan').style.display = 'none';
+    }
 
-      if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+    async function onStudentQrScanned(decodedNis) {
+      let nis = decodedNis.trim();
       
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 20, qrbox: { width: 250, height: 250 } },
-        (decodedText) => { processContinuousScan(decodedText); },
-        (error) => {}
-      ).catch(err => {
-        Swal.fire('Kamera Gagal', 'Tidak dapat mengakses kamera HP.', 'error');
-        closeScanner();
+      // Cegah Double Scan pada sesi yang sama
+      if (scannedNisSet.has(nis)) return;
+
+      scannedNisSet.add(nis);
+      playBeepSound();
+
+      // Flash visual hijau pada feed
+      document.getElementById('mode-scan-container').classList.add('flash-green');
+      setTimeout(() => document.getElementById('mode-scan-container').classList.remove('flash-green'), 400);
+
+      sessionScanCount++;
+      document.getElementById('scan-counter').innerText = `${sessionScanCount} Siswa Terabsen`;
+
+      // Tambahkan item ke feed riwayat scan
+      let feed = document.getElementById('scan-history-feed');
+      if (sessionScanCount === 1) feed.innerHTML = ''; // Clear placeholder
+      
+      let nowTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      let newItem = document.createElement('div');
+      newItem.style.cssText = "padding:6px; border-bottom:1px solid #eee; font-size:12px; display:flex; justify-content:space-between;";
+      newItem.innerHTML = `<span><b>NIS: ${nis}</b> (Terabsen)</span><span style="color:#6b7280">${nowTime}</span>`;
+      feed.insertBefore(newItem, feed.firstChild);
+
+      // Kirim data ke backend secara terpisah (background process)
+      panggilAPI({
+        action: 'absenSiswaSingle',
+        token: sessionToken,
+        nis: nis
+      }).catch(err => {
+        Toast.fire({ icon: 'error', title: `Gagal simpan NIS ${nis}` });
       });
+    }
+
+    // =========================================================
+    // 3. MODE PRESENSI KELAS (ATTENDANCE BY EXCEPTION)
+    // =========================================================
+    async function loadStudentByClass() {
+      let kelas = document.getElementById('sel-kelas').value;
+      if(!kelas) {
+        document.getElementById('class-student-list').innerHTML = '<p style="text-align:center; color:#888;">Pilih kelas terlebih dahulu.</p>';
+        document.getElementById('btn-submit-class').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('class-student-list').innerHTML = '<p style="text-align:center;">Memuat data siswa...</p>';
+
+      try {
+        let students = await panggilAPI({ action: 'getSiswaByKelas', token: sessionToken, kelas: kelas });
+        
+        if(!students || students.length === 0) {
+          document.getElementById('class-student-list').innerHTML = '<p style="text-align:center; color:red;">Tidak ada data siswa di kelas ini.</p>';
+          document.getElementById('btn-submit-class').style.display = 'none';
+          return;
+        }
+
+        let html = `<p style="font-size:12px; color:#6b7280;">Hapus centang hanya pada siswa yang <b>TIDAK HADIR</b>:</p>`;
+        students.forEach((s, idx) => {
+          html += `
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">
+              <label style="font-size:13px; font-weight:bold;">
+                <input type="checkbox" class="chk-siswa" data-nis="${s.nis}" checked style="width:auto; margin-right:8px;">
+                ${s.nama} (${s.nis})
+              </label>
+              <select class="sel-status-siswa" data-nis="${s.nis}" style="width:90px; padding:4px; font-size:11px; margin:0;">
+                <option value="HADIR">Hadir</option>
+                <option value="SAKIT">Sakit</option>
+                <option value="IZIN">Izin</option>
+                <option value="ALPHA">Alpha</option>
+              </select>
+            </div>
+          `;
+        });
+
+        document.getElementById('class-student-list').innerHTML = html;
+        document.getElementById('btn-submit-class').style.display = 'block';
+
+      } catch(e) {
+        document.getElementById('class-student-list').innerHTML = `<p style="text-align:center; color:red;">Error: ${e.message}</p>`;
+      }
+    }
+
+    async function submitClassAttendance() {
+      let classVal = document.getElementById('sel-kelas').value;
+      let checkboxes = document.querySelectorAll('.chk-siswa');
+      let payloadData = [];
+
+      checkboxes.forEach(chk => {
+        let nis = chk.getAttribute('data-nis');
+        let selStatus = document.querySelector(`.sel-status-siswa[data-nis='${nis}']`).value;
+        let finalStatus = chk.checked ? 'HADIR' : (selStatus === 'HADIR' ? 'ALPHA' : selStatus);
+        payloadData.push({ nis: nis, status: finalStatus });
+      });
+
+      Swal.fire({ title: 'Menyimpan Presensi Kelas...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      try {
+        await panggilAPI({ action: 'submitPresensiKelas', token: sessionToken, kelas: classVal, data: payloadData });
+        Swal.fire('Berhasil!', `Presensi Kelas ${classVal} tersimpan.`, 'success');
+      } catch (e) {
+        Swal.fire('Gagal', e.message || 'Terjadi kesalahan', 'error');
+      }
+    }
+
+    // =========================================================
+    // 4. AUTHENTICATION & SINGLE SCANNER
+    // =========================================================
+    let singleScanner;
+    function openScannerWindow(mode) {
+      document.getElementById('scanner-modal').style.display = 'flex';
+      if (!singleScanner) {
+        singleScanner = new Html5QrcodeScanner("reader", { fps: 30, qrbox: { width: 250, height: 250 } }, false);
+      }
+      singleScanner.render((decodedText) => {
+        closeScanner();
+        prosesLoginQR(decodedText);
+      }, () => {});
     }
 
     function closeScanner() {
       document.getElementById('scanner-modal').style.display = 'none';
-      if (html5QrCode && html5QrCode.isScanning) {
-        html5QrCode.stop().then(() => html5QrCode.clear()).catch(e => console.log(e));
-      }
+      if (singleScanner) singleScanner.clear().catch(e => console.error(e));
     }
 
-    function playBeepSound() {
+    function prosesLoginQR(scannedId) {
+      Swal.fire({ title: 'Verifikasi...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      panggilAPI({ action: 'login', nip: scannedId }).then(res => {
+        if (res && res.user) {
+          Swal.fire('Berhasil!', `Selamat datang, ${res.user.name}`, 'success');
+          loginSuccess(res.user, res.sessionToken, false);
+        } else throw new Error("User tidak ditemukan.");
+      }).catch(e => Swal.fire('Gagal Login', e.message || 'Error sistem', 'error'));
+    }
+
+    function openAdminLoginModal() {
+      document.getElementById('adminNipInput').value = '';
+      document.getElementById('adminPassInput').value = '';
+      document.getElementById('modalAdminLogin').style.display = 'flex';
+    }
+
+    function closeAdminLoginModal() { document.getElementById('modalAdminLogin').style.display = 'none'; }
+
+    async function processAdminLogin() {
+      const nip = document.getElementById('adminNipInput').value.trim();
+      const password = document.getElementById('adminPassInput').value.trim();
+      if (!nip || !password) return Swal.fire('Peringatan', 'Isi NIP dan Password!', 'warning');
+
+      closeAdminLoginModal();
+      Swal.fire({ title: 'Memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.type = "sine"; osc.frequency.setValueAtTime(880, ctx.currentTime);
-        gain.gain.setValueAtTime(0.15, ctx.currentTime);
-        osc.start(); osc.stop(ctx.currentTime + 0.12);
-      } catch(e) {}
+        const res = await panggilAPI({ action: 'loginAdmin', nip: nip, password: password });
+        if (res && res.user) {
+          Swal.close();
+          loginSuccess(res.user, res.sessionToken, false);
+        } else throw new Error("User tidak ditemukan.");
+      } catch (error) {
+        Swal.fire('Login Gagal', error.message || 'Terjadi kesalahan', 'error');
+      }
     }
 
-    function triggerGreenFlash() {
-      let overlay = document.getElementById('scan-flash-overlay');
-      overlay.classList.add('flash-green');
-      setTimeout(() => overlay.classList.remove('flash-green'), 300);
-    }
-
-    function processContinuousScan(nisnScanned) {
-      let cleanNisn = String(nisnScanned).trim();
+    function loginSuccess(user, token, isSilent) {
+      currentUser = user;
+      sessionToken = token;
+      localStorage.setItem('pb_session', token);
       
-      // ANTI-DOUBLE SCAN PROTECTION
-      if (scannedInSessionSet.has(cleanNisn)) return;
-
-      let siswa = globalData.siswaList.find(s => String(s.nisn) === cleanNisn);
-      if (siswa) {
-        scannedInSessionSet.add(cleanNisn);
-        currentAbsensiMap[siswa.nisn] = 'H';
-        playBeepSound();
-        triggerGreenFlash();
-        updateScanCounterBadge();
-        renderSiswaList();
-      }
+      document.getElementById('user-name').innerText = user.name;
+      document.getElementById('user-role').innerText = `${user.role} - ID: ${user.nip}`;
+      
+      document.getElementById('navbar').style.display = 'flex';
+      document.getElementById('bottom-nav').style.display = 'flex';
+      
+      // Akses UI Berdasarkan Role
+      let isStaff = (user.role === 'Admin' || user.role === 'User' || user.role === 'Pegawai' || user.role === 'Guru');
+      if (isStaff) document.querySelectorAll('.staff-only').forEach(el => el.style.display = 'block');
+      if (user.role === 'Admin') document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+      
+      document.getElementById('view-public').classList.remove('active');
+      renderLoans();
+      switchTab('dashboard');
     }
 
-    function updateScanCounterBadge() {
-      let count = scannedInSessionSet.size;
-      document.getElementById('scan-counter-badge').innerText = `Terabsen: ${count} / ${globalData.siswaList.length} Siswa`;
+    function logout(isSilent) {
+      stopContinuousScan();
+      localStorage.removeItem('pb_session');
+      currentUser = null;
+      sessionToken = null;
+
+      const resetUI = () => {
+        document.getElementById('navbar').style.display = 'none';
+        document.getElementById('bottom-nav').style.display = 'none';
+        document.querySelectorAll('.staff-only, .admin-only').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-public').classList.add('active');
+        loadPublicData();
+      };
+
+      if(isSilent) return resetUI();
+      Swal.fire({ title: 'Berhasil Keluar', icon: 'success', timer: 1200, showConfirmButton: false }).then(() => resetUI());
     }
 
-    // -------------------------------------------------------------------------
-    // GENERATOR CETAK KARTU QR SISWA (REQ 1)
-    // -------------------------------------------------------------------------
-    function renderQRGenerator() {
-      let container = document.getElementById('qr-cards-container');
-      container.innerHTML = '';
-      let selK = document.getElementById('qr-filter-kelas').value;
-
-      let filtered = globalData.siswaList.filter(s => (selK === 'ALL' || s.kelas === selK));
-
-      if(filtered.length === 0) {
-        container.innerHTML = '<p style="text-align:center;">Tidak ada data siswa untuk dicetak.</p>'; return;
-      }
-
-      filtered.forEach((s, idx) => {
-        let cardDiv = document.createElement('div');
-        cardDiv.className = 'qr-card-item';
-        cardDiv.innerHTML = `
-          <b style="font-size:12px; display:block;">SRT 2 KOTA PASURUAN</b>
-          <span style="font-size:10px; color:#6b7280;">KARTU PRESENSI SISWA</span>
-          <div id="qrcode-target-${idx}"></div>
-          <b style="font-size:13px; display:block;">${s.nama}</b>
-          <span style="font-size:11px;">NISN: ${s.nisn} | ${s.kelas}</span>
-        `;
-        container.appendChild(cardDiv);
-
-        new QRCode(document.getElementById(`qrcode-target-${idx}`), {
-          text: String(s.nisn), width: 100, height: 100
-        });
-      });
+    function switchTab(tabId) {
+      stopContinuousScan();
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById('view-' + tabId).classList.add('active');
+      let activeNav = document.querySelector(`.nav-item[onclick*='${tabId}']`);
+      if(activeNav) activeNav.classList.add('active');
     }
 
-    // -------------------------------------------------------------------------
-    // PEMINJAMAN & LAPORAN
-    // -------------------------------------------------------------------------
+    // =========================================================
+    // 5. PEMINJAMAN BARANG & LAPORAN
+    // =========================================================
     function addCart() {
       let sel = document.getElementById('sel-barang');
       let qty = parseInt(document.getElementById('in-qty').value);
       let time = document.getElementById('in-time').value;
-      if(!sel.value || !time || qty < 1) return Swal.fire('Lengkapi Data', 'Pilih barang & jam!', 'warning');
+      
+      if(!sel.value || !time || isNaN(qty) || qty < 1) return Swal.fire('Data Belum Lengkap', 'Lengkapi form peminjaman!', 'warning');
+
+      let selectedItem = globalData.barang.find(b => b.kode === sel.value);
+      let inCart = cart.filter(c => c.kode === sel.value).reduce((sum, c) => sum + parseInt(c.qty), 0);
+      
+      if (selectedItem && (qty + inCart) > selectedItem.sisa) {
+        return Swal.fire('Stok Tidak Cukup', `Sisa stok tersisa ${selectedItem.sisa - inCart}`, 'error');
+      }
+      
       cart.push({ kode: sel.value, nama: sel.options[sel.selectedIndex].text, qty: qty, waktu: time });
-      Toast.fire({ icon: 'success', title: 'Masuk Keranjang' });
+      Toast.fire({ icon: 'success', title: 'Dimasukkan ke daftar' });
       document.getElementById('cart-list').innerHTML = cart.map(c => `<li>${c.qty}x ${c.nama} (S/d ${c.waktu})</li>`).join('');
     }
 
     async function submitPinjam() {
-      if(cart.length === 0) return Swal.fire('Kosong', 'Pilih barang!', 'warning');
-      let t = document.getElementById('in-tujuan').value.trim();
-      if(!t) return Swal.fire('Perhatian', 'Isi tujuan!', 'warning');
-      Swal.fire({ title: 'Memproses...', didOpen: () => Swal.showLoading() });
+      if(cart.length === 0) return Swal.fire('Keranjang Kosong', 'Pilih minimal 1 barang!', 'warning');
+      let tujuan = document.getElementById('in-tujuan').value.trim();
+      if(!tujuan) return Swal.fire('Data Belum Lengkap', 'Isi tujuan peminjaman!', 'warning');
+      
+      Swal.fire({ title: 'Memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
       try {
-        await panggilAPI({ action: 'submitLoan', token: sessionToken, cart: cart, tujuan: t });
-        Swal.fire('Sukses!', 'Pinjaman dicatat.', 'success');
-        cart = []; document.getElementById('cart-list').innerHTML = '';
-        loadPublicData(); switchTab('dashboard');
-      } catch(e) { Swal.fire('Gagal', e.message, 'error'); }
+        await panggilAPI({ action: 'submitLoan', token: sessionToken, cart: cart, tujuan: tujuan });
+        Swal.fire('Sukses!', 'Peminjaman berhasil dicatat.', 'success');
+        cart = []; 
+        document.getElementById('cart-list').innerHTML = '';
+        document.getElementById('in-tujuan').value = '';
+        loadPublicData();
+        switchTab('dashboard');
+      } catch (error) {
+        Swal.fire('Gagal', error.message || 'Terjadi kesalahan', 'error');
+      }
+    }
+
+    async function endLoan(detailId) {
+      const result = await Swal.fire({ title: 'Akhiri Peminjaman?', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Akhiri' });
+      if (!result.isConfirmed) return;
+      
+      Swal.fire({ title: 'Memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      try {
+        await panggilAPI({ action: 'finishDetail', token: sessionToken, detailId: detailId });
+        Swal.fire('Selesai!', 'Peminjaman diakhiri.', 'success');
+        loadPublicData();
+      } catch (error) {
+        Swal.fire('Error', error.message || 'Gagal mengakhiri pinjaman', 'error');
+      }
     }
 
     async function generateReport() {
-      let type = document.getElementById('rep-type').value;
-      let s = document.getElementById('rep-start').value;
-      let e = document.getElementById('rep-end').value;
-      Swal.fire({ title: 'Menyiapkan Laporan...', didOpen: () => Swal.showLoading() });
+      let startVal = document.getElementById('rep-start').value;
+      let endVal = document.getElementById('rep-end').value;
+
+      Swal.fire({ title: 'Mengambil Data...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
       try {
-        let act = (type === 'absensi') ? 'getReportAbsensi' : 'getReportData';
-        let data = await panggilAPI({ action: act, token: sessionToken, startDate: s, endDate: e });
+        let data = await panggilAPI({ action: 'getReportData', token: sessionToken, startDate: startVal, endDate: endVal });
         Swal.close();
         document.getElementById('card-report-result').style.display = 'block';
-        let thead = document.getElementById('report-table-head');
-        let tbody = document.getElementById('report-table-body');
 
-        if(type === 'absensi') {
-          document.getElementById('rep-header-title').innerText = "LAPORAN PRESENSI SISWA";
-          thead.innerHTML = `<tr><th>ID Record</th><th>Tgl</th><th>Sesi</th><th>NISN</th><th>Nama</th><th>Kelas</th><th>Status</th><th>Timestamp</th><th>Keterangan</th></tr>`;
-          tbody.innerHTML = (data || []).map(i => `<tr><td>${i.id}</td><td>${i.tanggal}</td><td>${i.sesi}</td><td>${i.nisn}</td><td>${i.nama}</td><td>${i.kelas}</td><td><b>${i.status}</b></td><td>${i.timestamp}</td><td>${i.keterangan||'-'}</td></tr>`).join('');
-        } else {
-          document.getElementById('rep-header-title').innerText = "LAPORAN PEMINJAMAN BARANG";
-          thead.innerHTML = `<tr><th>ID</th><th>Peminjam</th><th>Barang</th><th>Qty</th><th>Status</th><th>Waktu</th></tr>`;
-          tbody.innerHTML = (data || []).map(i => `<tr><td>${i.detailId}</td><td>${i.namaPeminjam}</td><td>${i.namaBarang}</td><td>${i.qty}</td><td>${i.status}</td><td>${i.waktuPinjam}</td></tr>`).join('');
+        let tbody = document.getElementById('report-table-body');
+        if(!data || data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Tidak ada data.</td></tr>`;
+          return;
         }
-      } catch(err) { Swal.fire('Gagal Laporan', err.message, 'error'); }
+
+        let html = '';
+        data.forEach((item, index) => {
+          html += `
+            <tr>
+              <td style="padding:8px; border:1px solid #ccc;">${index + 1}</td>
+              <td style="padding:8px; border:1px solid #ccc;">${item.namaPeminjam}</td>
+              <td style="padding:8px; border:1px solid #ccc;">${item.tipe || 'Peminjaman'}</td>
+              <td style="padding:8px; border:1px solid #ccc;">${item.namaBarang || '-'}</td>
+              <td style="padding:8px; border:1px solid #ccc;">${formatDate(item.waktuPinjam)}</td>
+              <td style="padding:8px; border:1px solid #ccc;"><b>${item.status}</b></td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (error) {
+        Swal.fire('Gagal Load Laporan', error.message || 'Terjadi kesalahan', 'error');
+      }
     }
   </script>
 </body>
